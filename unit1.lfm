@@ -1,0 +1,120 @@
+object Editor: TEditor
+  Left = 114
+  Height = 687
+  Top = 237
+  Width = 948
+  Caption = 'Редактор'
+  ClientHeight = 662
+  ClientWidth = 948
+  Color = clWindow
+  Menu = MMenu
+  LCLVersion = '1.6.4.0'
+  object PB: TPaintBox
+    Left = 0
+    Height = 612
+    Top = 50
+    Width = 948
+    Align = alClient
+    BorderSpacing.Top = 50
+    Color = clBlack
+    ParentColor = False
+    OnMouseDown = MouseDown
+    OnMouseMove = MouseMove
+    OnMouseUp = MouseUp
+    OnPaint = FormPaint
+  end
+  object Color_: TColorBox
+    Left = 88
+    Height = 26
+    Top = 7
+    Width = 100
+    ItemHeight = 20
+    TabOrder = 0
+  end
+  object Width_: TSpinEdit
+    Left = 312
+    Height = 28
+    Top = 8
+    Width = 96
+    MinValue = 1
+    TabOrder = 1
+    Value = 1
+  end
+  object WidthLabel: TLabel
+    Left = 208
+    Height = 20
+    Top = 10
+    Width = 100
+    Caption = 'Ширина кисти'
+    ParentColor = False
+  end
+  object ColorLabel: TLabel
+    Left = 8
+    Height = 20
+    Top = 10
+    Width = 75
+    Caption = 'Цвет кисти'
+    ParentColor = False
+  end
+  object Button1: TButton
+    Left = 528
+    Height = 25
+    Top = 11
+    Width = 75
+    Caption = 'Линия'
+    Color = clWhite
+    TabOrder = 2
+  end
+  object Button2: TButton
+    Left = 616
+    Height = 25
+    Top = 11
+    Width = 120
+    Caption = 'Прямоугольник'
+    Color = clWhite
+    TabOrder = 3
+  end
+  object Button3: TButton
+    Left = 744
+    Height = 25
+    Top = 11
+    Width = 75
+    Caption = 'Эллипс'
+    TabOrder = 4
+  end
+  object Button4: TButton
+    Left = 424
+    Height = 25
+    Top = 10
+    Width = 96
+    Caption = 'Карандаш'
+    TabOrder = 5
+  end
+  object Button5: TButton
+    Left = 832
+    Height = 25
+    Top = 11
+    Width = 80
+    Caption = 'Очистить'
+    OnClick = Button5Click
+    TabOrder = 6
+  end
+  object MMenu: TMainMenu
+    left = 16
+    top = 72
+    object File_: TMenuItem
+      Caption = 'Файл'
+      object Exit_: TMenuItem
+        Caption = 'Выход'
+        OnClick = Exit_Click
+      end
+    end
+    object About: TMenuItem
+      Caption = 'Справка'
+      object Author: TMenuItem
+        Caption = 'О программе'
+        OnClick = AuthorClick
+      end
+    end
+  end
+end
