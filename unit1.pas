@@ -13,20 +13,14 @@ type
   { TEditor }
 
   TEditor = class(TForm)
-    Back: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
-    Button5: TButton;
     Color_: TColorBox;
     ColorLabel: TLabel;
     BrushColor_: TColorBox;
-    Ellipce: TButton;
-    Line: TButton;
     FuckingPanel: TPanel;
     ButtonPanel: TPanel;
-    Polyline: TButton;
-    Rectangle: TButton;
     WidthLabel: TLabel;
     MMenu: TMainMenu;
     File_: TMenuItem;
@@ -38,10 +32,6 @@ type
     Width_: TSpinEdit;
     procedure ButtonsDown(Sender: TObject);
     procedure BackClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MouseUp(Sender: TObject; Button: TMouseButton;
@@ -52,7 +42,6 @@ type
     procedure MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-
 
   private
     { private declarations }
@@ -102,9 +91,29 @@ end;
 procedure TEditor.FormCreate(Sender: TObject);
 var
   i: integer;
-  TButton_: TSpeedButton;
+  TButton_, Clear, Back_: TSpeedButton;
   ToolIcon: TBitMap;
 begin
+  Clear:= TSpeedButton.Create(Editor);
+  Clear.Width := 60;
+  Clear.Height := 40;
+  Clear.Top := 45;
+  Clear.Left := 5;
+  Clear.Parent := ButtonPanel;
+  Clear.Tag := 4;
+  Clear.OnClick:=@ButtonsDown;
+  Clear.Caption:='Очистить';
+
+  Back_ := TSpeedButton.Create(Editor);
+  Back_.Width := 50;
+  Back_.Height := 40;
+  Back_.Top := 45;
+  Back_.Left := 70;
+  Back_.Parent := ButtonPanel;
+  Back_.Tag := 5;
+  Back_.OnClick:=@ButtonsDown;
+  Back_.Caption:='Назад';
+
   for i:=0 to 3 do begin
   TButton_ := TSpeedButton.Create(Editor);
   TButton_.Width := 40;
@@ -112,7 +121,8 @@ begin
   TButton_.Top := 0;
   TButton_.Left := 5+5*i+40*i;
   TButton_.Parent := ButtonPanel;
-  TButton_.Tag := i ;
+  TButton_.Tag := i;
+  TButton_.OnClick:=@ButtonsDown;
   ToolIcon := TBitmap.Create;
   with TPicture.create do
     begin
@@ -126,33 +136,23 @@ end;
 
 procedure TEditor.ButtonsDown(Sender: TObject);
 begin
-  CurrentTool := Tool[(Sender as TSpeedbutton).tag];
-end;
-
-procedure TEditor.Button1Click(Sender: TObject);
-begin
-  CurrentTool := TLineTool.Create();
+  if (Sender as TSpeedbutton).tag < 4 then CurrentTool := Tool[(Sender as TSpeedbutton).tag]
+  else
+    if (Sender as TSpeedbutton).tag = 4 then
+    begin
+    setlength(Figures, 0);
+    Invalidate;
+    end
+    else begin
+    if length(figures)>0 then setlength(Figures, length(figures) -1);
+    Invalidate;
+    end;
 end;
 
 procedure TEditor.BackClick(Sender: TObject);
 begin
   if length(figures)>0 then setlength(Figures, length(figures) -1);
   Invalidate;
-end;
-
-procedure TEditor.Button2Click(Sender: TObject);
-begin
-  CurrentTool := TRectangleTool.Create();
-end;
-
-procedure TEditor.Button3Click(Sender: TObject);
-begin
-  CurrentTool := TEllipceTool.Create();
-end;
-
-procedure TEditor.Button4Click(Sender: TObject);
-begin
-  CurrentTool := TPolyLineTool.Create();
 end;
 
 procedure TEditor.FormPaint(Sender: TObject);
@@ -197,5 +197,4 @@ begin
   Tool[2].Icons:='C:\Users\Таня\Desktop\pascal\редактор\никчемная\2.png';
   Tool[3]:= TEllipceTool.Create();
   Tool[3].Icons:='C:\Users\Таня\Desktop\pascal\редактор\никчемная\3.png';
-
 end.
