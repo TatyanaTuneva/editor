@@ -8,13 +8,14 @@ object Editor: TEditor
   ClientWidth = 1126
   Color = clWindow
   Menu = MMenu
+  OnCreate = FormCreate
   LCLVersion = '1.6.4.0'
   object PB: TPaintBox
     AnchorSideBottom.Control = FuckingPanel
-    Left = 168
+    Left = 216
     Height = 631
     Top = 0
-    Width = 958
+    Width = 910
     Align = alClient
     Color = clBlack
     ParentColor = False
@@ -27,10 +28,10 @@ object Editor: TEditor
     Left = 0
     Height = 631
     Top = 0
-    Width = 168
+    Width = 216
     Align = alLeft
     ClientHeight = 631
-    ClientWidth = 168
+    ClientWidth = 216
     ParentBidiMode = False
     TabOrder = 0
     object Polyline: TButton
@@ -72,9 +73,9 @@ object Editor: TEditor
       TabOrder = 3
     end
     object Button5: TButton
-      Left = 16
-      Height = 48
-      Top = 392
+      Left = 24
+      Height = 32
+      Top = 440
       Width = 125
       Caption = 'Очистить'
       OnClick = Button5Click
@@ -83,7 +84,7 @@ object Editor: TEditor
     object Color_: TColorBox
       Left = 16
       Height = 26
-      Top = 232
+      Top = 208
       Width = 100
       ItemHeight = 20
       TabOrder = 5
@@ -91,16 +92,16 @@ object Editor: TEditor
     object Width_: TSpinEdit
       Left = 16
       Height = 28
-      Top = 320
+      Top = 280
       Width = 96
       MinValue = 1
       TabOrder = 6
       Value = 1
     end
     object WidthLabel: TLabel
-      Left = 19
+      Left = 16
       Height = 20
-      Top = 288
+      Top = 248
       Width = 100
       Caption = 'Ширина кисти'
       ParentColor = False
@@ -108,9 +109,41 @@ object Editor: TEditor
     object ColorLabel: TLabel
       Left = 16
       Height = 20
-      Top = 192
+      Top = 176
       Width = 75
       Caption = 'Цвет кисти'
+      ParentColor = False
+    end
+    object ButtonPanel: TPanel
+      Left = 0
+      Height = 107
+      Top = 477
+      Width = 216
+      TabOrder = 7
+    end
+    object Back: TButton
+      Left = 24
+      Height = 25
+      Top = 408
+      Width = 122
+      Caption = 'Назад'
+      OnClick = BackClick
+      TabOrder = 8
+    end
+    object BrushColor_: TColorBox
+      Left = 16
+      Height = 26
+      Top = 352
+      Width = 100
+      ItemHeight = 20
+      TabOrder = 9
+    end
+    object BrushLabel: TLabel
+      Left = 16
+      Height = 20
+      Top = 320
+      Width = 93
+      Caption = 'Цвет заливки'
       ParentColor = False
     end
   end

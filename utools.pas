@@ -9,6 +9,7 @@ uses
 
 type
 TFigureTool = class
+  Icons: string;
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); virtual; abstract;
   procedure MouseMove(X: integer;Y: integer); virtual; abstract;
 end;
