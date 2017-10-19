@@ -13,9 +13,6 @@ type
   { TEditor }
 
   TEditor = class(TForm)
-    Button2: TButton;
-    Button3: TButton;
-    Button4: TButton;
     Color_: TColorBox;
     ColorLabel: TLabel;
     BrushColor_: TColorBox;
@@ -31,8 +28,6 @@ type
     BrushLabel: TLabel;
     Width_: TSpinEdit;
     procedure ButtonsDown(Sender: TObject);
-    procedure BackClick(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -61,7 +56,6 @@ var
   lines: array of line;
   isDrawing: boolean;
   CurrentTool: TFigureTool;
-  Tool: array of TFigureTool;
 
 implementation
 
@@ -82,16 +76,10 @@ begin
   Invalidate;
 end;
 
-procedure TEditor.Button5Click(Sender: TObject);
-begin
-  setlength(Figures, 0);
-  Invalidate;
-end;
-
 procedure TEditor.FormCreate(Sender: TObject);
 var
   i: integer;
-  TButton_, Clear, Back_: TSpeedButton;
+  ToolButton, Clear, Back_: TSpeedButton;
   ToolIcon: TBitMap;
 begin
   Clear:= TSpeedButton.Create(Editor);
@@ -115,23 +103,22 @@ begin
   Back_.Caption:='Назад';
 
   for i:=0 to 3 do begin
-  TButton_ := TSpeedButton.Create(Editor);
-  TButton_.Width := 40;
-  TButton_.Height := 40;
-  TButton_.Top := 0;
-  TButton_.Left := 5+5*i+40*i;
-  TButton_.Parent := ButtonPanel;
-  TButton_.Tag := i;
-  TButton_.OnClick:=@ButtonsDown;
+  ToolButton := TSpeedButton.Create(Editor);
+  ToolButton.Width := 40;
+  ToolButton.Height := 40;
+  ToolButton.Top := 0;
+  ToolButton.Left := 5+5*i+40*i;
+  ToolButton.Parent := ButtonPanel;
+  ToolButton.Tag := i;
+  ToolButton.OnClick:=@ButtonsDown;
   ToolIcon := TBitmap.Create;
   with TPicture.create do
     begin
     LoadFromFile(Tool[i].Icons);
     ToolIcon.Assign(Graphic);
     end;
-  TButton_.Glyph := ToolIcon;
+  ToolButton.Glyph := ToolIcon;
   end;
-
 end;
 
 procedure TEditor.ButtonsDown(Sender: TObject);
@@ -139,20 +126,14 @@ begin
   if (Sender as TSpeedbutton).tag < 4 then CurrentTool := Tool[(Sender as TSpeedbutton).tag]
   else
     if (Sender as TSpeedbutton).tag = 4 then
-    begin
-    setlength(Figures, 0);
-    Invalidate;
-    end
+      begin
+      setlength(Figures, 0);
+      Invalidate;
+      end
     else begin
-    if length(figures)>0 then setlength(Figures, length(figures) -1);
-    Invalidate;
+      if length(figures)>0 then setlength(Figures, length(figures) -1);
+      Invalidate;
     end;
-end;
-
-procedure TEditor.BackClick(Sender: TObject);
-begin
-  if length(figures)>0 then setlength(Figures, length(figures) -1);
-  Invalidate;
 end;
 
 procedure TEditor.FormPaint(Sender: TObject);
@@ -188,13 +169,4 @@ end;
 
 begin
   CurrentTool := TPolyLineTool.Create();
-  Setlength(Tool, 4);
-  Tool[0]:= TPolyLineTool.Create();
-  Tool[0].Icons:='C:\Users\Таня\Desktop\pascal\редактор\никчемная\0.png';
-  Tool[1]:= TLineTool.Create();
-  Tool[1].Icons:='C:\Users\Таня\Desktop\pascal\редактор\никчемная\1.png';
-  Tool[2]:= TRectangleTool.Create();
-  Tool[2].Icons:='C:\Users\Таня\Desktop\pascal\редактор\никчемная\2.png';
-  Tool[3]:= TEllipceTool.Create();
-  Tool[3].Icons:='C:\Users\Таня\Desktop\pascal\редактор\никчемная\3.png';
 end.

@@ -41,6 +41,8 @@ TRectangleTool = class(TBigFigureTool)
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); override;
   procedure MouseMove(X: integer;Y: integer); override;
 end;
+var
+  Tool: array of TFigureTool;
 
 implementation
 
@@ -123,5 +125,13 @@ begin
 end;
 
 begin
-
+  Setlength(Tool, 4);
+    Tool[0]:= TPolyLineTool.Create();
+    Tool[0].Icons:='0.png';
+    Tool[1]:= TLineTool.Create();
+    Tool[1].Icons:='1.png';
+    Tool[2]:= TRectangleTool.Create();
+    Tool[2].Icons:='2.png';
+    Tool[3]:= TEllipceTool.Create();
+    Tool[3].Icons:='3.png';
 end.
