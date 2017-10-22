@@ -32,28 +32,34 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="unit1.pas"/>
+        <Filename Value="mainunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Editor"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Unit1"/>
+        <UnitName Value="MainUnit"/>
       </Unit1>
       <Unit2>
-        <Filename Value="figures_.pas"/>
+        <Filename Value="figuresunit.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Figures_"/>
+        <UnitName Value="FiguresUnit"/>
       </Unit2>
       <Unit3>
-        <Filename Value="utools.pas"/>
+        <Filename Value="toolsunit.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="ToolsUnit"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="scaleunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="ScaleUnit"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
