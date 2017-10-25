@@ -12,6 +12,7 @@ object Editor: TEditor
   LCLVersion = '1.6.4.0'
   object PB: TPaintBox
     AnchorSideBottom.Control = ToolPanel
+    Cursor = crHandPoint
     Left = 160
     Height = 601
     Top = 0
@@ -19,7 +20,7 @@ object Editor: TEditor
     Align = alClient
     BorderSpacing.Right = 22
     BorderSpacing.Bottom = 22
-    Color = clBlack
+    Color = clHotLight
     ParentColor = False
     OnMouseDown = MouseDown
     OnMouseMove = MouseMove
@@ -134,7 +135,7 @@ object Editor: TEditor
     Left = 160
     Height = 21
     Top = 600
-    Width = 890
+    Width = 914
     Anchors = [akLeft, akRight, akBottom]
     Max = 881
     PageSize = 881

@@ -77,6 +77,7 @@ procedure TEditor.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   IsDrawing := False;
+  CurrentTool.MouseUp(X, Y);
   Invalidate;
 end;
 

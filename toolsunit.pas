@@ -20,33 +20,38 @@ TLittleFigureTool = class(TFigureTool)
 end;
 
 TBigFigureTool = class(TLittleFigureTool)
-
+  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TPolyLineTool = class(TLittleFigureTool)
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); override;
   procedure MouseMove(X: integer;Y: integer); override;
+  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TLineTool = class(TLittleFigureTool)
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); override;
   procedure MouseMove(X: integer;Y: integer); override;
+  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TEllipceTool = class(TBigFigureTool)
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); override;
   procedure MouseMove(X: integer;Y: integer); override;
+  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TRectangleTool = class(TBigFigureTool)
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); override;
   procedure MouseMove(X: integer;Y: integer); override;
+  procedure MouseUp(X: integer;Y: integer); override;
 end;
 
 TPaw = class(TFigureTool)
   FirstPoint: TPoint;
   procedure MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor); override;
   procedure MouseMove(X: integer;Y: integer); override;
+  procedure MouseUp(X: integer;Y: integer); override;
 end;
 
 Tmagnifier = class(TFigureTool)
@@ -63,13 +68,38 @@ implementation
 
 procedure TLittleFigureTool.MouseUp(X: integer;Y: integer);
 begin
+end;
 
+procedure TBigFigureTool.MouseUp(X: integer;Y: integer);
+begin
+end;
+
+procedure TEllipceTool.MouseUp(X: integer;Y: integer);
+begin
+end;
+
+procedure TPolyLineTool.MouseUp(X: integer;Y: integer);
+begin
+end;
+
+procedure TRectangleTool.MouseUp(X: integer;Y: integer);
+begin
+end;
+
+procedure Tlinetool.MouseUp(X: integer;Y: integer);
+begin
+end;
+
+procedure TPaw.MouseUp(X: integer;Y: integer);
+begin
 end;
 
 procedure TMagnifier.MouseUp(X: integer;Y: integer);
 begin
-  SetLength(Figures, Length(Figures) - 1);
-  rectZoom((Figures[High(Figures)] as TLittleFigure).Points[0], (Figures[High(Figures)] as TLittleFigure).Points[1]);
+ AHeight : = (Figures[high(Figures)] as TBigFigure).Points[0].y - (Figures[high(Figures)]as TBigFigure.Points[1].y);
+ AWidth := (Figures[high(Figures)]as TBigFigure).Points[0].x - (Figures[high(Figures)]as TBigFigure.Points[1].x);
+ RectZoom(AHeight,AWidth; MinX,MaxX,MinY,MaxY);
+ SetLength(Figures, Length(Figures) - 1);                                                                           1
 end;
 
 procedure TMagnifier.MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor);
@@ -195,6 +225,6 @@ begin
   Tool[3].Icons:='3.png';
   Tool[4]:= TPaw.Create();
   Tool[4].Icons:='4.png';
-  Tool[5]:=TMagnifier.Create();
+  Tool[5]:=Tmagnifier.Create();
   Tool[5].Icons:='5.png';
 end.

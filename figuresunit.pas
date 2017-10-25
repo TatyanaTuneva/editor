@@ -42,6 +42,7 @@ end;
 
 var
   Figures: array of TFigure;
+  layer: array of Tfigure;
 
 Implementation
 

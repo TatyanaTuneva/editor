@@ -10,18 +10,24 @@ uses
 function WorldToScreen (APoint: TFloatPoint): TPoint;
 function ScreenToWorld (APoint: TPoint): TFloatPoint;
 procedure MaxMin(APoint: TFloatPoint);
-procedure rectZoom(first, second: TPoint);
+procedure RectZoom(AHeight,AWidth:Extended;MinX,MaxX,MinY,MaxY:Extended);
 
 var
 zoom: double;
 Offset: TPoint;
 MinX,MaxX,MinY,MaxY: Extended;
+AHeight, AWidth: Extended;
 
 implementation
 
-procedure rectZoom(first, second: TPoint);
+procedure RectZoom(AHeight,AWidth:Extended;MinX,MaxX,MinY,MaxY:Extended);
 begin
-
+  if (Awidth/(MaxX-MinX))>(AHeight/(MaxY-MinY)) then
+    Zoom := AHeight/(MaxY-MinY)*100
+  else
+    Zoom := AWidth/(MaxX-MinX)*100;
+  Offset.x:=round(MinX*Zoom/100);
+  Offset.y:=round(MinY*Zoom/100);
 end;
 
 function WorldToScreen (APoint: TFloatPoint): TPoint;
