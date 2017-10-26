@@ -96,10 +96,10 @@ end;
 
 procedure TMagnifier.MouseUp(X: integer;Y: integer);
 begin
- AHeight : = (Figures[high(Figures)] as TBigFigure).Points[0].y - (Figures[high(Figures)]as TBigFigure.Points[1].y);
- AWidth := (Figures[high(Figures)]as TBigFigure).Points[0].x - (Figures[high(Figures)]as TBigFigure.Points[1].x);
- RectZoom(AHeight,AWidth; MinX,MaxX,MinY,MaxY);
- SetLength(Figures, Length(Figures) - 1);                                                                           1
+ AHeight := abs((Figures[high(Figures)] as TBigFigure).Points[0].y - (Figures[high(Figures)]as TBigFigure).Points[1].y);
+ AWidth := abs((Figures[high(Figures)]as TBigFigure).Points[0].x - (Figures[high(Figures)]as TBigFigure).Points[1].x);
+ RectZoom(AHeight,AWidth, MinX,MaxX,MinY,MaxY);
+ SetLength(Figures, Length(Figures) - 1);
 end;
 
 procedure TMagnifier.MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor);
@@ -145,7 +145,7 @@ begin
   (Figures[high(Figures)] as TLittleFigure).Points[high((Figures[high(Figures)] as TLittleFigure).Points)] := ScreenToWorld(Point(AX,AY));
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
-
+  MaxMin(Point(AX,AY));
 end;
 
 procedure TLineTool.MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor);
@@ -160,6 +160,7 @@ begin
  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
  AFigure.PenColor := APenColor;
  AFigure.Width := AWidth;
+ MaxMin(Point(AX,AY));
 end;
 
 procedure TRectangleTool.MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor);
@@ -175,6 +176,7 @@ begin
  AFigure.PenColor := APenColor;
  AFigure.Width := AWidth;
  AFigure.BrushColor := ABrushColor;
+ MaxMin(Point(AX,AY));
 end;
 
 procedure TEllipceTool.MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor);
@@ -190,27 +192,32 @@ begin
  AFigure.PenColor := APenColor;
  AFigure.Width := AWidth;
  AFigure.BrushColor := ABrushColor;
+ MaxMin(Point(AX,AY));
 end;
 
 procedure TLineTool.MouseMove(X: integer;Y: integer);
 begin
   (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));
+  MaxMin(Point(X,Y));
 end;
 
 procedure TEllipceTool.MouseMove(X: integer;Y: integer);
 begin
   (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));
+    MaxMin(Point(X,Y));
 end;
 
 procedure TRectangleTool.MouseMove(X: integer;Y: integer);
 begin
   (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));
+    MaxMin(Point(X,Y));
 end;
 
 procedure TPolyLineTool.MouseMove(X: integer;Y: integer);
 begin
   SetLength((Figures[high(Figures)] as TLittleFigure).points, length((Figures[high(Figures)] as TLittleFigure).points) + 1);
  (Figures[high(Figures)] as TLittleFigure).Points[high((Figures[high(Figures)] as TLittleFigure).Points)] := ScreenToWorld(Point(X,Y));
+   MaxMin(Point(X,Y));
 end;
 
 begin

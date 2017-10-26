@@ -136,8 +136,11 @@ begin
   end;
   ScrollBarVertical.Max:=trunc(MaxY);
   ScrollBarVertical.Min:=trunc(MinY);
-  ScrollBarHorizontal.Max:=trunc(MaxY);
+  ScrollBarHorizontal.Max:=trunc(MaxX);
   ScrollBarHorizontal.Min:=trunc(MinX);
+  ZoomSpinEdit.Value := zoom;
+  ScrollBarHorizontal.Position := Offset.x;
+  ScrollBarVertical.Position := Offset.y;
 end;
 
 procedure TEditor.AuthorClick(Sender: TObject);
@@ -173,10 +176,12 @@ end;
 
 procedure TEditor.ZoomChange(Sender: TObject);
 var
-  oldzoom:double;
+oldzoom: double;
 begin
-  oldzoom := Zoom;
-  Zoom := (ZoomSpinEdit.Value);
+  oldzoom:=zoom;
+  Zoom := ZoomSpinEdit.Value;
+  ScrollBarHorizontal.Position := Offset.x;
+  ScrollBarVertical.Position := Offset.y;
   Invalidate;
 end;
 
