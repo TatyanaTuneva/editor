@@ -13,6 +13,7 @@ type
   { TEditor }
 
   TEditor = class(TForm)
+    ShowAllButton: TButton;
     Clear: TButton;
     Back: TButton;
     Color_: TColorBox;
@@ -47,7 +48,9 @@ type
     procedure MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure ScrollBarScroll(Sender: TObject;
       ScrollCode: TScrollCode; var ScrollPos: Integer);
+    procedure ShowAllButtonClick(Sender: TObject);
     procedure ZoomChange(Sender: TObject);
+
 
   private
     { private declarations }
@@ -134,13 +137,13 @@ begin
   for i := 0 to high(Figures) do begin
     Figures[i].Draw(PB.Canvas);
   end;
-  ScrollBarVertical.Max:=trunc(MaxY);
-  ScrollBarVertical.Min:=trunc(MinY);
-  ScrollBarHorizontal.Max:=trunc(MaxX);
-  ScrollBarHorizontal.Min:=trunc(MinX);
+  ScrollBarVertical.Max:=trunc(MaxPoint.Y);
+  ScrollBarVertical.Min:=trunc(MinPoint.Y);
+  ScrollBarHorizontal.Max:=trunc(MaxPoint.X);
+  ScrollBarHorizontal.Min:=trunc(MinPoint.X);
   ZoomSpinEdit.Value := zoom;
-  ScrollBarHorizontal.Position := Offset.x;
-  ScrollBarVertical.Position := Offset.y;
+  //ScrollBarHorizontal.Position:=offset.x;
+  //ScrollBarVertical.Position:=offset.y;
 end;
 
 procedure TEditor.AuthorClick(Sender: TObject);
@@ -167,6 +170,7 @@ begin
   end;
 end;
 
+
 procedure TEditor.ScrollBarScroll(Sender: TObject;
   ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
@@ -174,16 +178,22 @@ begin
   Invalidate;
 end;
 
-procedure TEditor.ZoomChange(Sender: TObject);
-var
-oldzoom: double;
+procedure TEditor.ShowAllButtonClick(Sender: TObject);
 begin
-  oldzoom:=zoom;
+ RectZoom(pB.Height,PB.Width,MinPoint,MaxPoint);
+ Invalidate;
+ ScrollBarVertical.Max:=trunc(MaxPoint.Y);
+ ScrollBarVertical.Min:=trunc(MinPoint.Y);
+ ScrollBarHorizontal.Max:=trunc(MaxPoint.X);
+ ScrollBarHorizontal.Min:=trunc(MinPoint.X);
+end;
+
+procedure TEditor.ZoomChange(Sender: TObject);
+begin
   Zoom := ZoomSpinEdit.Value;
-  ScrollBarHorizontal.Position := Offset.x;
-  ScrollBarVertical.Position := Offset.y;
   Invalidate;
 end;
+
 
 begin
 end.

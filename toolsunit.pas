@@ -96,25 +96,25 @@ end;
 
 procedure TMagnifier.MouseUp(X: integer;Y: integer);
 begin
- AHeight := abs((Figures[high(Figures)] as TBigFigure).Points[0].y - (Figures[high(Figures)]as TBigFigure).Points[1].y);
- AWidth := abs((Figures[high(Figures)]as TBigFigure).Points[0].x - (Figures[high(Figures)]as TBigFigure).Points[1].x);
- RectZoom(AHeight,AWidth, MinX,MaxX,MinY,MaxY);
+ AHeight := abs((Figures[high(Figures)] as TLittleFigure).Points[0].y - (Figures[high(Figures)]as TLittleFigure).Points[1].y);
+ AWidth := abs((Figures[high(Figures)]as TLittleFigure).Points[0].x - (Figures[high(Figures)]as TLittleFigure).Points[1].x);
+ RectZoom(AHeight,AWidth,(Figures[high(Figures)] as TLittleFigure).Points[0],(Figures[high(Figures)] as TLittleFigure).Points[1]);
  SetLength(Figures, Length(Figures) - 1);
 end;
 
 procedure TMagnifier.MouseDown(AX: integer;AY: integer; AWidth: integer; APenColor: TColor; ABrushColor: TColor);
 var
-  AFigure: TBigFigure;
+  AFigure: TRectangleMagnifier;
 begin
   Setlength(Figures, Length(figures) + 1);
-  Figures[high(Figures)] := TRectangle.Create();
-  AFigure := (Figures[high(Figures)] as TBigFigure);
+  Figures[high(Figures)] := TRectangleMagnifier.Create();
+  AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
   SetLength(AFigure.Points, 2);
+  AFigure.BrushStyle := bsClear;
+  AFigure.PenColor := clBlack;
+  AFigure.BrushColor:=clNone;
   AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
   AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
-  AFigure.PenColor := clBlack;
-  AFigure.Width := AWidth;
-  AFigure.BrushStyle := bsClear;
 end;
 
 procedure TMagnifier.MouseMove(X: integer;Y: integer);

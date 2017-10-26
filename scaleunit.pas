@@ -10,24 +10,25 @@ uses
 function WorldToScreen (APoint: TFloatPoint): TPoint;
 function ScreenToWorld (APoint: TPoint): TFloatPoint;
 procedure MaxMin(APoint: TFloatPoint);
-procedure RectZoom(AHeight,AWidth:Extended;MinX,MaxX,MinY,MaxY:Extended);
+procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
+procedure ShowAll(MinPoint, MaxPoint: TFloatPoint; zoom: double);
 
 var
 zoom: double;
-Offset: TPoint;
-MinX,MaxX,MinY,MaxY: Extended;
+Offset : TPoint;
+MinPoint, MaxPoint: TFloatPoint;
 AHeight, AWidth: Extended;
 
 implementation
 
-procedure RectZoom(AHeight,AWidth:Extended;MinX,MaxX,MinY,MaxY:Extended);
+procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
 begin
-  if (Awidth/(MaxX-MinX))>(AHeight/(MaxY-MinY)) then
-    Zoom := AHeight/(MaxY-MinY)*100
+  if (Awidth/(MaxPoint.X-MinPoint.X))>(AHeight/(MaxPoint.Y-MinPoint.Y)) then
+    Zoom := 100*AHeight/(MaxPoint.Y-MinPoint.Y)
   else
-    Zoom := AWidth/(MaxX-MinX)*100;
-  Offset.x:=round(MinX*Zoom/100);
-  Offset.y:=round(MinY*Zoom/100);
+    Zoom := 100*AWidth/(MaxPoint.X-MinPoint.X);
+  Offset.x:=round(MinPoint.X*Zoom/100);
+  Offset.y:=round(MinPoint.Y*Zoom/100);
 end;
 
 function WorldToScreen (APoint: TFloatPoint): TPoint;
@@ -44,10 +45,21 @@ end;
 
 procedure MaxMin(APoint: TFloatPoint);
 begin
- if APoint.X > MaxX then MaxX :=APoint.X;
- if APoint.Y > MaxY then MaxY :=APoint.Y;
- if APoint.X < MinX then MinX :=APoint.X;
- if APoint.Y < MinY then MinY :=APoint.Y;
+  if (APoint.x > MaxPoint.x) then
+     MaxPoint.x := APoint.x;
+  if (APoint.y > MaxPoint.y) then
+     MaxPoint.y := APoint.y;
+  if (APoint.x < MinPoint.x) then
+     MinPoint.x := APoint.x;
+  if (APoint.y < MinPoint.y) then
+     MinPoint.y := APoint.y;
+end;
+
+procedure ShowAll(MinPoint, MaxPoint: TFloatPoint; zoom: double);
+begin
+{ if abs(MaxPoint.X-MinPoint.x) then
+    zoom := zoom
+    else   }
 end;
 
 begin

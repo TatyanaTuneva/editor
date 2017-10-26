@@ -40,6 +40,12 @@ TRectangle = class(TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
+TRectangleMagnifier= class(TLittleFigure)
+  BrushStyle: TBrushStyle;
+  BrushColor: TColor;
+  procedure Draw(ACanvas:TCanvas); override;
+end;
+
 var
   Figures: array of TFigure;
   layer: array of Tfigure;
@@ -81,6 +87,12 @@ begin
 end;
 
 procedure TRectangle.Draw(ACanvas:TCanvas);
+begin
+  Inherited;
+  ACanvas.Rectangle(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y);
+end;
+
+procedure TRectangleMagnifier.Draw(ACanvas:TCanvas);
 begin
   Inherited;
   ACanvas.Rectangle(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y);

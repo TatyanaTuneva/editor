@@ -20,7 +20,7 @@ object Editor: TEditor
     Align = alClient
     BorderSpacing.Right = 22
     BorderSpacing.Bottom = 22
-    Color = clHotLight
+    Color = clNone
     ParentColor = False
     OnMouseDown = MouseDown
     OnMouseMove = MouseMove
@@ -98,6 +98,7 @@ object Editor: TEditor
       Height = 28
       Top = 472
       Width = 125
+      Enabled = False
       MaxValue = 800
       MinValue = 1
       OnChange = ZoomChange
@@ -107,7 +108,7 @@ object Editor: TEditor
     object Clear: TButton
       Left = 16
       Height = 25
-      Top = 136
+      Top = 176
       Width = 123
       Caption = 'Очистить'
       OnClick = ClearClick
@@ -116,7 +117,7 @@ object Editor: TEditor
     object Back: TButton
       Left = 16
       Height = 25
-      Top = 184
+      Top = 216
       Width = 123
       Caption = 'Назад'
       OnClick = BackClick
@@ -129,6 +130,15 @@ object Editor: TEditor
       Width = 26
       Caption = 'Зум'
       ParentColor = False
+    end
+    object ShowAllButton: TButton
+      Left = 16
+      Height = 25
+      Top = 136
+      Width = 123
+      Caption = 'Показать все'
+      OnClick = ShowAllButtonClick
+      TabOrder = 7
     end
   end
   object ScrollBarHorizontal: TScrollBar
