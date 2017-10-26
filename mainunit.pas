@@ -142,8 +142,8 @@ begin
   ScrollBarHorizontal.Max:=trunc(MaxPoint.X);
   ScrollBarHorizontal.Min:=trunc(MinPoint.X);
   ZoomSpinEdit.Value := zoom;
-  //ScrollBarHorizontal.Position:=offset.x;
-  //ScrollBarVertical.Position:=offset.y;
+  AHeightPB:=pB.Height;
+  AWidthPB:=PB.Width;
 end;
 
 procedure TEditor.AuthorClick(Sender: TObject);
@@ -169,7 +169,6 @@ begin
   Invalidate;
   end;
 end;
-
 
 procedure TEditor.ScrollBarScroll(Sender: TObject;
   ScrollCode: TScrollCode; var ScrollPos: Integer);

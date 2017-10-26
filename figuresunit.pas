@@ -95,7 +95,7 @@ end;
 procedure TRectangleMagnifier.Draw(ACanvas:TCanvas);
 begin
   Inherited;
-  ACanvas.Rectangle(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y);
+  ACanvas.Frame(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y);
 end;
 
 procedure SetOffset (APoint: TFloatPoint);

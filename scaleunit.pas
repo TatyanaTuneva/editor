@@ -18,6 +18,7 @@ zoom: double;
 Offset : TPoint;
 MinPoint, MaxPoint: TFloatPoint;
 AHeight, AWidth: Extended;
+AHeightPB, AWidthPB: Extended;
 
 implementation
 
