@@ -1,7 +1,7 @@
 object Editor: TEditor
-  Left = 566
+  Left = 563
   Height = 648
-  Top = 143
+  Top = 129
   Width = 1096
   Caption = 'Редактор'
   ClientHeight = 623
@@ -37,72 +37,23 @@ object Editor: TEditor
     ClientWidth = 160
     ParentBidiMode = False
     TabOrder = 0
-    object Color_: TColorBox
-      Left = 16
-      Height = 26
-      Top = 280
-      Width = 125
-      ItemHeight = 20
-      TabOrder = 0
-    end
-    object Width_: TSpinEdit
-      Left = 16
-      Height = 28
-      Top = 408
-      Width = 125
-      MinValue = 1
-      TabOrder = 1
-      Value = 1
-    end
-    object WidthLabel: TLabel
-      Left = 16
-      Height = 20
-      Top = 384
-      Width = 100
-      Caption = 'Ширина кисти'
-      ParentColor = False
-    end
-    object ColorLabel: TLabel
-      Left = 16
-      Height = 20
-      Top = 256
-      Width = 75
-      Caption = 'Цвет кисти'
-      ParentColor = False
-    end
     object ButtonPanel: TPanel
       Left = 0
-      Height = 112
+      Height = 128
       Top = 0
       Width = 160
-      TabOrder = 2
-    end
-    object BrushColor_: TColorBox
-      Left = 16
-      Height = 26
-      Top = 344
-      Width = 125
-      ItemHeight = 20
-      TabOrder = 3
-    end
-    object BrushLabel: TLabel
-      Left = 16
-      Height = 20
-      Top = 320
-      Width = 93
-      Caption = 'Цвет заливки'
-      ParentColor = False
+      TabOrder = 0
     end
     object ZoomSpinEdit: TSpinEdit
       Left = 17
       Height = 28
-      Top = 472
+      Top = 576
       Width = 125
       Enabled = False
       MaxValue = 800
       MinValue = 1
       OnChange = ZoomChange
-      TabOrder = 4
+      TabOrder = 1
       Value = 100
     end
     object Clear: TButton
@@ -112,7 +63,7 @@ object Editor: TEditor
       Width = 123
       Caption = 'Очистить'
       OnClick = ClearClick
-      TabOrder = 5
+      TabOrder = 2
     end
     object Back: TButton
       Left = 16
@@ -121,12 +72,12 @@ object Editor: TEditor
       Width = 123
       Caption = 'Назад'
       OnClick = BackClick
-      TabOrder = 6
+      TabOrder = 3
     end
     object ZoomLabel: TLabel
-      Left = 17
+      Left = 16
       Height = 20
-      Top = 448
+      Top = 552
       Width = 26
       Caption = 'Зум'
       ParentColor = False
@@ -138,7 +89,7 @@ object Editor: TEditor
       Width = 123
       Caption = 'Показать все'
       OnClick = ShowAllButtonClick
-      TabOrder = 7
+      TabOrder = 4
     end
   end
   object ScrollBarHorizontal: TScrollBar

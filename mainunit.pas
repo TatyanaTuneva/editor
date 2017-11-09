@@ -16,23 +16,17 @@ type
     ShowAllButton: TButton;
     Clear: TButton;
     Back: TButton;
-    Color_: TColorBox;
-    ColorLabel: TLabel;
-    BrushColor_: TColorBox;
     ZoomLabel: TLabel;
     ScrollBarHorizontal: TScrollBar;
     ScrollBarVertical: TScrollBar;
     ToolPanel: TPanel;
     ButtonPanel: TPanel;
-    WidthLabel: TLabel;
     MMenu: TMainMenu;
     File_: TMenuItem;
     About: TMenuItem;
     Exit_: TMenuItem;
     Author: TMenuItem;
     PB: TPaintBox;
-    BrushLabel: TLabel;
-    Width_: TSpinEdit;
     ZoomSpinEdit: TSpinEdit;
     procedure BackClick(Sender: TObject);
     procedure ButtonsDown(Sender: TObject);
@@ -62,7 +56,8 @@ var
   Editor: TEditor;
   isDrawing: boolean;
   CurrentTool: TFigureTool;
-
+  SelectedPenColor, SelectedBrushColor: TColor;
+  SelectedWidth, SelectedRoundingRadius: integer;
 
 implementation
 
@@ -73,7 +68,7 @@ implementation
 
 procedure TEditor.Exit_Click(Sender: TObject);
 begin
-     Close();
+  Close();
 end;
 
 procedure TEditor.MouseUp(Sender: TObject; Button: TMouseButton;
@@ -101,7 +96,8 @@ begin
   ToolButton.Left := (i mod 3) * 40 ;
   ToolButton.Parent := ButtonPanel;
   ToolButton.Tag := i;
-  ToolButton.OnClick:=@ButtonsDown;
+  ToolButton.OnClick := @ButtonsDown;
+  if i=0 then ToolButton.Click();
   ToolIcon := TBitmap.Create;
   with TPicture.create do
     begin
@@ -113,8 +109,17 @@ begin
 end;
 
 procedure TEditor.ButtonsDown(Sender: TObject);
+var
+  Parampanel: TPanel;
 begin
   CurrentTool := Tool[(Sender as TSpeedbutton).tag];
+  ParamPanel := TPanel.Create(Editor);
+  ParamPanel.Top := 210;
+  Parampanel.LeFt := 5;
+  ParamPanel.Width := 155;
+  ParamPanel.Height := 300;
+  ParamPanel.Parent := ToolPanel;
+  CurrentTool.ParamsCreate(ParamPanel);
   Invalidate;
 end;
 
@@ -137,13 +142,13 @@ begin
   for i := 0 to high(Figures) do begin
     Figures[i].Draw(PB.Canvas);
   end;
-  ScrollBarVertical.Max:=trunc(MaxPoint.Y);
-  ScrollBarVertical.Min:=trunc(MinPoint.Y);
-  ScrollBarHorizontal.Max:=trunc(MaxPoint.X);
-  ScrollBarHorizontal.Min:=trunc(MinPoint.X);
+  ScrollBarVertical.Max := trunc(MaxPoint.Y);
+  ScrollBarVertical.Min := trunc(MinPoint.Y);
+  ScrollBarHorizontal.Max := trunc(MaxPoint.X);
+  ScrollBarHorizontal.Min := trunc(MinPoint.X);
   ZoomSpinEdit.Value := zoom;
-  AHeightPB:=pB.Height;
-  AWidthPB:=PB.Width;
+  AHeightPB := PB.Height;
+  AWidthPB := PB.Width;
 end;
 
 procedure TEditor.AuthorClick(Sender: TObject);
@@ -155,7 +160,7 @@ procedure TEditor.MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   IsDrawing := true;
-  CurrentTool.MouseDown(X, Y, Width_.Value, Color_.Selected, BrushColor_.Selected);
+  CurrentTool.MouseDown(X, Y);
   MaxMin(ScreenToWorld(Point(X,Y)));
   Invalidate;
 end;
@@ -164,27 +169,29 @@ procedure TEditor.MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
   );
 begin
   if IsDrawing then  begin
-  CurrentTool.MouseMove(X, Y);
-  MaxMin(ScreenToWorld(Point(X,Y)));
-  Invalidate;
+    CurrentTool.MouseMove(X, Y);
+    MaxMin(ScreenToWorld(Point(X,Y)));
+    Invalidate;
   end;
 end;
 
 procedure TEditor.ScrollBarScroll(Sender: TObject;
   ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
-  offset := Point(ScrollBarHorizontal.Position, ScrollBarVertical.Position);
+  Offset := Point(ScrollBarHorizontal.Position, ScrollBarVertical.Position);
   Invalidate;
 end;
 
 procedure TEditor.ShowAllButtonClick(Sender: TObject);
 begin
- RectZoom(pB.Height,PB.Width,MinPoint,MaxPoint);
- Invalidate;
- ScrollBarVertical.Max:=trunc(MaxPoint.Y);
- ScrollBarVertical.Min:=trunc(MinPoint.Y);
- ScrollBarHorizontal.Max:=trunc(MaxPoint.X);
- ScrollBarHorizontal.Min:=trunc(MinPoint.X);
+  RectZoom(pB.Height,PB.Width,MinPoint,MaxPoint);
+  Invalidate;
+  ScrollBarVertical.Max:=trunc(MaxPoint.Y);
+  ScrollBarVertical.Min:=trunc(MinPoint.Y);
+  ScrollBarHorizontal.Max:=trunc(MaxPoint.X);
+  ScrollBarHorizontal.Min:=trunc(MinPoint.X);
+  Offset.X:=0;
+  Offset.Y:=0;
 end;
 
 procedure TEditor.ZoomChange(Sender: TObject);
@@ -192,7 +199,6 @@ begin
   Zoom := ZoomSpinEdit.Value;
   Invalidate;
 end;
-
 
 begin
 end.

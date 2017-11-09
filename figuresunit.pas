@@ -21,6 +21,8 @@ end;
 TBigFigure = class(TLittleFigure)
   BrushColor: TColor;
   BrushStyle: TBrushStyle;
+  RoundingRadiusX: integer;
+  RoundingRadiusY:Integer;
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
@@ -40,9 +42,13 @@ TRectangle = class(TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
-TRectangleMagnifier= class(TLittleFigure)
+TRectangleMagnifier = class(TLittleFigure)
   BrushStyle: TBrushStyle;
   BrushColor: TColor;
+  procedure Draw(ACanvas:TCanvas); override;
+end;
+
+TRoundedRectangle = class (TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
@@ -97,6 +103,13 @@ begin
   Inherited;
   ACanvas.Frame(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y);
 end;
+
+procedure TRoundedRectangle.Draw(ACanvas:TCanvas);
+begin
+  Inherited;
+  ACanvas.RoundRect(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y, RoundingRadiusX,RoundingRadiusY);
+end;
+
 
 procedure SetOffset (APoint: TFloatPoint);
 begin

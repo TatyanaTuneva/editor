@@ -7,29 +7,32 @@ interface
 uses
   Classes, SysUtils, GraphMath;
 
-function WorldToScreen (APoint: TFloatPoint): TPoint;
-function ScreenToWorld (APoint: TPoint): TFloatPoint;
-procedure MaxMin(APoint: TFloatPoint);
-procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
-procedure ShowAll(MinPoint, MaxPoint: TFloatPoint; zoom: double);
+ function WorldToScreen (APoint: TFloatPoint): TPoint;
+ function ScreenToWorld (APoint: TPoint): TFloatPoint;
+ procedure MaxMin(APoint: TFloatPoint);
+ procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
 
 var
-zoom: double;
-Offset : TPoint;
-MinPoint, MaxPoint: TFloatPoint;
-AHeight, AWidth: Extended;
-AHeightPB, AWidthPB: Extended;
+ zoom: double;
+ Offset : TPoint;
+ MinPoint, MaxPoint: TFloatPoint;
+ AHeight, AWidth: Extended;
+ AHeightPB, AWidthPB: Extended;
 
 implementation
 
 procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
 begin
-  if (Awidth/(MaxPoint.X-MinPoint.X))>(AHeight/(MaxPoint.Y-MinPoint.Y)) then
-    Zoom := 100*AHeight/(MaxPoint.Y-MinPoint.Y)
-  else
-    Zoom := 100*AWidth/(MaxPoint.X-MinPoint.X);
-  Offset.x:=round(MinPoint.X*Zoom/100);
-  Offset.y:=round(MinPoint.Y*Zoom/100);
+  if (MaxPoint.X-MinPoint.X<>0) and (MaxPoint.Y-MinPoint.Y<>0) then begin
+    if (Awidth/(abs(MaxPoint.X-MinPoint.X)))>(AHeight/(abs(MaxPoint.Y-MinPoint.Y)))then
+      Zoom := 100*AHeight/(abs(MaxPoint.Y-MinPoint.Y))
+    else
+      Zoom := 100*AWidth/(abs(MaxPoint.X-MinPoint.X));
+   If MinPoint.X<MaxPoint.X then  Offset.x:=round(MinPoint.X*Zoom/100)
+      else Offset.x:=round(MaxPoint.X*Zoom/100);
+   If MinPoint.Y<MaxPoint.Y then  Offset.y:=round(MinPoint.Y*Zoom/100)
+      else Offset.Y:=round(MaxPoint.Y*Zoom/100)
+  end;
 end;
 
 function WorldToScreen (APoint: TFloatPoint): TPoint;
@@ -56,13 +59,5 @@ begin
      MinPoint.y := APoint.y;
 end;
 
-procedure ShowAll(MinPoint, MaxPoint: TFloatPoint; zoom: double);
 begin
-{ if abs(MaxPoint.X-MinPoint.x) then
-    zoom := zoom
-    else   }
-end;
-
-begin
-
 end.
