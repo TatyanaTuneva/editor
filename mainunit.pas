@@ -115,7 +115,7 @@ begin
   ParamPanel.Top := 210;
   Parampanel.LeFt := 5;
   ParamPanel.Width := 155;
-  ParamPanel.Height := 450;
+  ParamPanel.Height := 420;
   ParamPanel.Parent := ToolPanel;
   CurrentTool.ParamsCreate(ParamPanel);
   Invalidate;

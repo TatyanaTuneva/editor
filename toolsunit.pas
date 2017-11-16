@@ -10,44 +10,44 @@ uses
 type
 
  TParam = class
- procedure CreateObjects(Panel: TPanel); virtual; abstract;
+ procedure CreateObjects(Panel: TPanel; pos: Integer); virtual; abstract;
 end;
 
  TPenColorParam = class(Tparam)
  procedure ChangePenColor(Sender: TObject);
- procedure CreateObjects(Panel: TPanel); override;
+ procedure CreateObjects(Panel: TPanel; pos: Integer); override;
 end;
 
  TBrushColorParam = class(TParam)
   procedure ChangeBrushColor(Sender: TObject);
-  procedure CreateObjects(Panel: TPanel); override;
+  procedure CreateObjects(Panel: TPanel; pos: Integer); override;
 end;
 
  TWidthParam = class(TParam)
   procedure ChangeWidth(Sender: TObject);
-  procedure CreateObjects(Panel: TPanel); override;
+  procedure CreateObjects(Panel: TPanel; pos: Integer); override;
 end;
 
 TRoundingRadiusParamX = class(TParam)
   procedure ChangeRoundX(Sender: TObject);
-  procedure CreateObjects(Panel: TPanel); override;
+  procedure CreateObjects(Panel: TPanel; pos: Integer); override;
 end;
 
 TRoundingRadiusParamY = class(TParam)
   procedure ChangeRoundY(Sender: TObject);
-  procedure CreateObjects(Panel: TPanel); override;
+  procedure CreateObjects(Panel: TPanel; pos: Integer); override;
 end;
 
 TBrushStyleParam = class(TParam)
   const BStyles: array [0..7] of TBrushStyle = (bsSolid, bsClear,
 bsHorizontal, bsVertical, bsFDiagonal, bsBDiagonal, bsCross, bsDiagCross);
   procedure ChangeBrushStyle(Sender: TObject);
-  procedure CreateObjects(Panel: TPanel); override;
+  procedure CreateObjects(Panel: TPanel; pos: Integer); override;
 end;
 
 TPenStyleParam = class(TParam)
   procedure ChangePenStyle(Sender: TObject);
-  procedure CreateObjects(Panel: TPanel); override;
+  procedure CreateObjects(Panel: TPanel; pos: Integer); override;
   const PStyles: array[0..5] of TPenStyle = (psSolid, psClear, psDot,
 psDash, psDashDot, psDashDotDot);
 end;
@@ -121,18 +121,18 @@ var
 
 implementation
 
-procedure TPenColorParam.CreateObjects(Panel: TPanel);
+procedure TPenColorParam.CreateObjects(Panel: TPanel; pos: integer);
 var
   ColorLabel: TLabel;
   PenColor: TColorBox;
 begin
   ColorLabel := TLabel.Create(Panel);
   ColorLabel.Caption := 'Цвет карандаша';
-  ColorLabel.Top := 0;
+  ColorLabel.Top := pos;
   ColorLabel.Parent:=Panel;
 
   PenColor := TColorBox.Create(panel);
-  PenColor.Top := 20;
+  PenColor.Top := pos + 20;
   PenColor.Parent := Panel;
   PenColor.Selected := APenColor;
   PenColor.OnChange := @ChangePenColor;
@@ -143,7 +143,7 @@ begin
   APenColor := (Sender as TColorBox).Selected;
 end;
 
-procedure TPenStyleParam.CreateObjects(Panel: TPanel);
+procedure TPenStyleParam.CreateObjects(Panel: TPanel; pos: Integer);
 var
   StyleLabel: TLabel;
   PenStyle: TComboBox;
@@ -152,7 +152,7 @@ var
 begin
   StyleLabel := TLabel.Create(Panel);
   StyleLabel.Caption := 'Стиль линии';
-  StyleLabel.Top := 60;
+  StyleLabel.Top := pos;
   StyleLabel.Parent:=Panel;
 
   PenStyle  := TComboBox.Create(panel);
@@ -161,7 +161,7 @@ begin
     WriteStr(s, PStyles[i]);
     PenStyle.Items.Add(s);
   end;
-  PenStyle.Top := 80;
+  PenStyle.Top := pos + 20;
   PenStyle.Parent := Panel;
   PenStyle.ItemIndex := SelectedPStyleIndex;
   PenStyle.OnChange := @ChangePenStyle;
@@ -173,18 +173,18 @@ begin
   SelectedPStyleIndex := (Sender as TComboBox).ItemIndex;
 end;
 
-procedure TWidthParam.CreateObjects(Panel: TPanel);
+procedure TWidthParam.CreateObjects(Panel: TPanel; pos: Integer);
 var
   WidthLabel: TLabel;
   WidthParam: TSpinEdit;
 begin
   WidthLabel := TLabel.Create(Panel);
   WidthLabel.Caption := 'Ширина карандаша';
-  WidthLabel.Top := 120;
+  WidthLabel.Top := pos;
   WidthLabel.Parent := Panel;
 
   WidthParam := TSpinEdit.Create(Panel);
-  WidthParam.Top := 140;
+  WidthParam.Top := pos + 20;
   WidthParam.MinValue := 1;
   WidthParam.Parent:= Panel;
   WidthParam.Value := AWidth;
@@ -196,18 +196,18 @@ begin
  AWidth := (Sender as TSpinEdit).Value;
 end;
 
-procedure TBrushColorParam.CreateObjects(Panel: TPanel);
+procedure TBrushColorParam.CreateObjects(Panel: TPanel; pos: Integer);
 var
   ColorLabel: TLabel;
   BrushColor: TColorBox;
 begin
   ColorLabel := TLabel.Create(Panel);
   ColorLabel.Caption := 'Цвет заливки';
-  ColorLabel.Top := 180;
+  ColorLabel.Top := pos;
   ColorLabel.Parent := Panel;
 
   BrushColor := TColorBox.Create(Panel);
-  BrushColor.Top := 200;
+  BrushColor.Top := pos + 20;
   BrushColor.Parent := Panel;
   BrushColor.Selected := ABrushColor;
   BrushColor.OnChange := @ChangeBrushColor;
@@ -218,7 +218,7 @@ begin
   ABrushColor := (Sender as TColorBox).Selected;
 end;
 
-procedure TBrushStyleParam.CreateObjects(Panel: TPanel);
+procedure TBrushStyleParam.CreateObjects(Panel: TPanel; pos: Integer);
 var
   StyleLabel: TLabel;
   BrushStyle: TComboBox;
@@ -227,7 +227,7 @@ var
 begin
   StyleLabel := TLabel.Create(Panel);
   StyleLabel.Caption := 'Стиль линии';
-  StyleLabel.Top := 240;
+  StyleLabel.Top := pos;
   StyleLabel.Parent:=Panel;
 
   BrushStyle := TComboBox.Create(panel);
@@ -236,7 +236,7 @@ begin
     WriteStr(s, BStyles[i]);
     BrushStyle.Items.Add(s);
   end;
-  BrushStyle.Top := 260;
+  BrushStyle.Top := pos + 20;
   BrushStyle.Parent := Panel;
   BrushStyle.ItemIndex := SelectedBStyleIndex;
   BrushStyle.OnChange := @ChangeBrushStyle;
@@ -248,18 +248,18 @@ begin
   SelectedBStyleIndex := (Sender as TComboBox).ItemIndex;
 end;
 
-procedure TRoundingRadiusParamX.CreateObjects(Panel: TPanel);
+procedure TRoundingRadiusParamX.CreateObjects(Panel: TPanel; pos: Integer);
 var
   RoundingRadiusLabel: TLabel;
   RoundingRadiusX: TSpinEdit;
 begin
   RoundingRadiusLabel := TLabel.Create(Panel);
   RoundingRadiusLabel.Caption := 'Радиус округления X';
-  RoundingRadiusLabel.Top := 300;
+  RoundingRadiusLabel.Top := pos;
   RoundingRadiusLabel.Parent := Panel;
 
   RoundingRadiusX := TSpinEdit.Create(Panel);
-  RoundingRadiusX.Top := 320;
+  RoundingRadiusX.Top := pos + 20;
   RoundingRadiusX.MinValue := 0;
   RoundingRadiusX.Parent := Panel;
   RoundingRadiusX.Value := ARadiusX;
@@ -271,18 +271,18 @@ begin
   ARadiusX := (Sender as TSpinEdit).Value;
 end;
 
-procedure TRoundingRadiusParamY.CreateObjects(Panel: TPanel);
+procedure TRoundingRadiusParamY.CreateObjects(Panel: TPanel; pos: Integer);
 var
   RoundingRadiusLabel: TLabel;
   RoundingRadiusY: TSpinEdit;
 begin
   RoundingRadiusLabel := TLabel.Create(Panel);
   RoundingRadiusLabel.Caption := 'Радиус округления Y';
-  RoundingRadiusLabel.Top := 360;
+  RoundingRadiusLabel.Top := pos;
   RoundingRadiusLabel.Parent :=Panel;
 
   RoundingRadiusY := TSpinEdit.Create(Panel);
-  RoundingRadiusY.Top := 380;
+  RoundingRadiusY.Top := pos + 20;
   RoundingRadiusY.MinValue := 0;
   RoundingRadiusY.Parent := Panel;
   RoundingRadiusY.Value := ARadiusY;
@@ -328,10 +328,10 @@ end;
 
 procedure TFigureTool.paramscreate(Panel: TPanel);
 var
-  i: Integer;
+  i, pos: Integer;
 begin
   For i:=0 to high(Param) do begin
-    Param[i].CreateObjects(Panel);
+    Param[i].CreateObjects(Panel, i * 60);
   end;
 end;
 
@@ -342,9 +342,6 @@ begin
   Tool[high(Tool)].Icons := s;
   Atool.ParamListCreate();
 end;
-
-
-
 
 procedure TFigureTool.MouseUp(X: Integer;Y: Integer);
 begin

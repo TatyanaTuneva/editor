@@ -19,7 +19,6 @@ var
  AHeight, AWidth: Extended;
  AHeightPB, AWidthPB: Extended;
 
-
 implementation
 
 procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
