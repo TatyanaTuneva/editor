@@ -163,6 +163,7 @@ begin
   end;
   PenStyle.Top := pos + 20;
   PenStyle.Parent := Panel;
+  PenStyle.ReadOnly := True;
   PenStyle.ItemIndex := SelectedPStyleIndex;
   PenStyle.OnChange := @ChangePenStyle;
 end;
@@ -239,6 +240,7 @@ begin
   BrushStyle.Top := pos + 20;
   BrushStyle.Parent := Panel;
   BrushStyle.ItemIndex := SelectedBStyleIndex;
+  BrushStyle.ReadOnly := True;
   BrushStyle.OnChange := @ChangeBrushStyle;
 end;
 
