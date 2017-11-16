@@ -28,7 +28,7 @@ end;
   procedure CreateObjects(Panel: TPanel); override;
 end;
 
- TRoundingRadiusParamX = class(TParam)
+TRoundingRadiusParamX = class(TParam)
   procedure ChangeRoundX(Sender: TObject);
   procedure CreateObjects(Panel: TPanel); override;
 end;
@@ -38,55 +38,58 @@ TRoundingRadiusParamY = class(TParam)
   procedure CreateObjects(Panel: TPanel); override;
 end;
 
+TBrushStyleParam = class(TParam)
+  procedure ChangeBrushStyle(Sender: TObject);
+  procedure CreateObjects(Panel: TPanel); override;
+end;
+
+TPenStyleParam = class(TParam)
+  procedure ChangePenStyle(Sender: TObject);
+  procedure CreateObjects(Panel: TPanel); override;
+end;
+
 TFigureTool = class
   Icons: string;
   Param: array of TParam;
   procedure MouseDown(AX: integer;AY: integer); virtual; abstract;
   procedure MouseMove(X: integer;Y: integer); virtual; abstract;
-  procedure Mouseup(X: integer;Y: integer); virtual;abstract;
+  procedure Mouseup(X: integer;Y: integer); virtual;
   procedure ParamListCreate(); virtual;abstract;
   procedure ParamsCreate(Panel: TPanel);
 end;
 
 TLittleFigureTool = class(TFigureTool)
-  procedure Mouseup(X: integer; Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
 TBigFigureTool = class(TLittleFigureTool)
-  procedure Mouseup(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
 TPolyLineTool = class(TLittleFigureTool)
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TLineTool = class(TLittleFigureTool)
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TEllipceTool = class(TBigFigureTool)
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure Mouseup(X: integer;Y: integer); override;
 end;
 
 TRectangleTool = class(TBigFigureTool)
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure MouseUp(X: integer;Y: integer); override;
 end;
 
 TPaw = class(TFigureTool)
   FirstPoint: TPoint;
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure MouseUp(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
@@ -100,7 +103,6 @@ end;
 TRoundedRectangleTool = class(TBigFigureTool)
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure MouseUp(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
@@ -109,6 +111,8 @@ var
   Tool: array of TFigureTool;
   APenColor, ABrushColor: TColor;
   AWidth,ARadiusX,ARadiusY: integer;
+  APenStyle: TPenStyle;
+  ABrushStyle: TBrushStyle;
 
 implementation
 
@@ -133,6 +137,31 @@ procedure TPenColorParam.ChangePenColor(Sender: TObject);
 begin
   APenColor := (Sender as TColorBox).Selected;
 end;
+
+
+
+procedure TPenStyleParam.CreateObjects(Panel: TPanel);
+var
+  StyleLabel: TLabel;
+  PenStyle: TColorBox;
+begin
+  StyleLabel := TLabel.Create(Panel);
+  StyleLabel.Caption := 'Стиль линии';
+  StyleLabel.Top := 0;
+  StyleLabel.Parent:=Panel;
+
+  PenStyle  := TColorBox.Create(panel);
+  PenStyle.Top := 20;
+  PenStyle.Parent := Panel;
+  PenStyle.Selected := APenColor;
+  PenStyle.OnChange := @ChangePenStyle;
+end;
+
+procedure TPenStyleParam.ChangePenStyle(Sender: TObject);
+begin
+  APenStyle := (Sender as TColorBox).Selected;
+end;
+
 
 procedure TBrushColorParam.CreateObjects(Panel: TPanel);
 var
@@ -272,36 +301,9 @@ begin
   Atool.ParamListCreate();
 end;
 
-procedure TLittleFigureTool.MouseUp(X: integer;Y: integer);
+procedure TFigureTool.MouseUp(X: Integer;Y: Integer);
 begin
-end;
 
-procedure TBigFigureTool.MouseUp(X: integer;Y: integer);
-begin
-end;
-
-procedure TEllipceTool.MouseUp(X: integer;Y: integer);
-begin
-end;
-
-procedure TPolyLineTool.MouseUp(X: integer;Y: integer);
-begin
-end;
-
-procedure TRectangleTool.MouseUp(X: integer;Y: integer);
-begin
-end;
-
-procedure TRoundedRectangleTool.MouseUp(X: integer;Y: integer);
-begin
-end;
-
-procedure TLineTool.MouseUp(X: integer;Y: integer);
-begin
-end;
-
-procedure TPaw.MouseUp(X: integer;Y: integer);
-begin
 end;
 
 procedure TMagnifier.MouseUp(X: integer;Y: integer);
