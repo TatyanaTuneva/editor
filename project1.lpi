@@ -32,7 +32,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -60,11 +60,6 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="ScaleUnit"/>
       </Unit4>
-      <Unit5>
-        <Filename Value="paramunit.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="ParamUnit"/>
-      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

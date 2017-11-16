@@ -1,11 +1,11 @@
 object Editor: TEditor
-  Left = 563
-  Height = 648
-  Top = 129
-  Width = 1096
+  Left = 315
+  Height = 753
+  Top = 102
+  Width = 1362
   Caption = 'Редактор'
-  ClientHeight = 623
-  ClientWidth = 1096
+  ClientHeight = 728
+  ClientWidth = 1362
   Color = clWindow
   Menu = MMenu
   OnCreate = FormCreate
@@ -14,9 +14,9 @@ object Editor: TEditor
     AnchorSideBottom.Control = ToolPanel
     Cursor = crHandPoint
     Left = 160
-    Height = 601
+    Height = 706
     Top = 0
-    Width = 914
+    Width = 1180
     Align = alClient
     BorderSpacing.Right = 22
     BorderSpacing.Bottom = 22
@@ -29,11 +29,11 @@ object Editor: TEditor
   end
   object ToolPanel: TPanel
     Left = 0
-    Height = 623
+    Height = 728
     Top = 0
     Width = 160
     Align = alLeft
-    ClientHeight = 623
+    ClientHeight = 728
     ClientWidth = 160
     ParentBidiMode = False
     TabOrder = 0
@@ -45,9 +45,9 @@ object Editor: TEditor
       TabOrder = 0
     end
     object ZoomSpinEdit: TSpinEdit
-      Left = 17
+      Left = 8
       Height = 28
-      Top = 576
+      Top = 688
       Width = 125
       Enabled = False
       MaxValue = 800
@@ -75,9 +75,9 @@ object Editor: TEditor
       TabOrder = 3
     end
     object ZoomLabel: TLabel
-      Left = 16
+      Left = 8
       Height = 20
-      Top = 552
+      Top = 664
       Width = 26
       Caption = 'Зум'
       ParentColor = False
@@ -95,8 +95,8 @@ object Editor: TEditor
   object ScrollBarHorizontal: TScrollBar
     Left = 160
     Height = 21
-    Top = 600
-    Width = 914
+    Top = 705
+    Width = 1180
     Anchors = [akLeft, akRight, akBottom]
     Max = 881
     PageSize = 881
@@ -104,8 +104,8 @@ object Editor: TEditor
     OnScroll = ScrollBarScroll
   end
   object ScrollBarVertical: TScrollBar
-    Left = 1073
-    Height = 601
+    Left = 1339
+    Height = 706
     Top = 0
     Width = 21
     Anchors = [akTop, akRight, akBottom]

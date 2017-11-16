@@ -56,8 +56,6 @@ var
   Editor: TEditor;
   isDrawing: boolean;
   CurrentTool: TFigureTool;
-  SelectedPenColor, SelectedBrushColor: TColor;
-  SelectedWidth, SelectedRoundingRadius: integer;
 
 implementation
 
@@ -117,7 +115,7 @@ begin
   ParamPanel.Top := 210;
   Parampanel.LeFt := 5;
   ParamPanel.Width := 155;
-  ParamPanel.Height := 300;
+  ParamPanel.Height := 450;
   ParamPanel.Parent := ToolPanel;
   CurrentTool.ParamsCreate(ParamPanel);
   Invalidate;

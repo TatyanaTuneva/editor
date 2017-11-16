@@ -14,6 +14,7 @@ end;
 TLittleFigure = class(TFigure)
   Points: array of TFloatPoint;
   PenColor: TColor;
+  PenStyle: TPenStyle;
   Width: integer;
   procedure Draw(ACanvas:TCanvas); override;
 end;
@@ -22,7 +23,7 @@ TBigFigure = class(TLittleFigure)
   BrushColor: TColor;
   BrushStyle: TBrushStyle;
   RoundingRadiusX: integer;
-  RoundingRadiusY:Integer;
+  RoundingRadiusY: Integer;
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
@@ -61,6 +62,7 @@ Implementation
 procedure TLittleFigure.Draw(ACanvas:TCanvas);
 begin
   ACanvas.Pen.Color := PenColor;
+  ACanvas.Pen.Style := PenStyle;
   ACanvas.Pen.Width := Width;
 end;
 
