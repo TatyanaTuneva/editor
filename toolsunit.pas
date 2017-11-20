@@ -110,6 +110,14 @@ TRoundedRectangleTool = class(TBigFigureTool)
   procedure ParamListCreate(); override;
 end;
 
+TSelectTool = class(TFigureTool)
+  SelectToolSelected: Boolean;
+  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseMove(X: integer;Y: integer); override;
+  procedure MouseUp(X: integer;Y: integer); override;
+  procedure ParamListCreate(); override;
+end;
+
 
 var
   Tool: array of TFigureTool;
@@ -227,7 +235,7 @@ var
   s: String;
 begin
   StyleLabel := TLabel.Create(Panel);
-  StyleLabel.Caption := 'Стиль линии';
+  StyleLabel.Caption := 'Стиль заливки ';
   StyleLabel.Top := pos;
   StyleLabel.Parent:=Panel;
 
@@ -263,9 +271,9 @@ begin
   RoundingRadiusX := TSpinEdit.Create(Panel);
   RoundingRadiusX.Top := pos + 20;
   RoundingRadiusX.MinValue := 0;
+  RoundingRadiusX.OnChange := @ChangeRoundX;
   RoundingRadiusX.Parent := Panel;
   RoundingRadiusX.Value := ARadiusX;
-  RoundingRadiusX.OnChange := @ChangeRoundX;
 end;
 
 procedure TRoundingRadiusParamX.ChangeRoundX(Sender: TObject);
@@ -325,6 +333,10 @@ begin
 end;
 
 procedure Tmagnifier.ParamListCreate();
+begin
+end;
+
+procedure TSelectTool.ParamListCreate();
 begin
 end;
 
@@ -504,6 +516,18 @@ begin
   MaxMin(Point(X,Y));
 end;
 
+procedure TSelectTool.MouseDown(AX: Integer; AY: Integer);
+begin
+end;
+
+procedure TSelectTool.MouseMove(X: Integer; Y: Integer);
+begin
+end;
+
+procedure TSelectTool.MouseUp(X: Integer; Y: Integer);
+begin
+end;
+
 begin
   RegisterTool(TPolyLineTool.Create(),'0.png');
   RegisterTool(TLineTool.Create(),'1.png');
@@ -512,6 +536,7 @@ begin
   RegisterTool(TPaw.Create(),'4.png');
   RegisterTool(Tmagnifier.Create(),'5.png');
   RegisterTool(TRoundedRectangleTool.Create(),'6.png');
+  RegisterTool(TSelectTool.Create(), '7.png');
   APenColor := clBlack;
   ABrushColor := clBlack;
   AWidth := 1;

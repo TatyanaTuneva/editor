@@ -12,7 +12,7 @@ object Editor: TEditor
   LCLVersion = '1.6.4.0'
   object PB: TPaintBox
     AnchorSideBottom.Control = ToolPanel
-    Cursor = crHandPoint
+    Cursor = crCross
     Left = 160
     Height = 681
     Top = 0

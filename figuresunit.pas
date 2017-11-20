@@ -112,7 +112,6 @@ begin
   ACanvas.RoundRect(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y, RoundingRadiusX,RoundingRadiusY);
 end;
 
-
 procedure SetOffset (APoint: TFloatPoint);
 begin
   Offset := APoint;
