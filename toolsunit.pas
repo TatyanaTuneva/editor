@@ -5,7 +5,7 @@ unit ToolsUnit;
 interface
 
 uses
-  Classes, SysUtils, FiguresUnit, Graphics, GraphMath, ScaleUnit, ExtCtrls, StdCtrls, Spin, ColorBox;
+  Classes, SysUtils, FiguresUnit, Graphics, GraphMath, ScaleUnit, ExtCtrls, StdCtrls, Spin, ColorBox, LCLType;
 
 type
 
@@ -111,7 +111,6 @@ TRoundedRectangleTool = class(TBigFigureTool)
 end;
 
 TSelectTool = class(TFigureTool)
-  SelectToolSelected: Boolean;
   procedure MouseDown(AX: integer;AY: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
   procedure MouseUp(X: integer;Y: integer); override;
@@ -126,6 +125,7 @@ var
   APenStyle: TPenStyle;
   ABrushStyle: TBrushStyle;
   SelectedBStyleIndex, SelectedPStyleIndex: integer;
+  SelectToolSelected: Boolean;
 
 implementation
 
@@ -373,7 +373,7 @@ var
   AFigure: TRectangleMagnifier;
 begin
   SetLength(Figures, Length(figures) + 1);
-  Figures[high(Figures)] := TRectangleMagnifier.Create();
+  Figures[high(Figures)] := TRectangleMagnifier.Create();           ////
   AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
   SetLength(AFigure.Points, 2);
   AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
@@ -517,15 +517,33 @@ begin
 end;
 
 procedure TSelectTool.MouseDown(AX: Integer; AY: Integer);
+var
+  AFigure: TRectangleMagnifier;
 begin
+  SetLength(Figures, Length(figures) + 1);
+  Figures[high(Figures)] := TRectangleMagnifier.Create();
+  AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
+  SetLength(AFigure.Points, 2);
+  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
+  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
+
+
+
 end;
 
 procedure TSelectTool.MouseMove(X: Integer; Y: Integer);
 begin
+  (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));                                                                    /////////
 end;
 
 procedure TSelectTool.MouseUp(X: Integer; Y: Integer);
 begin
+  SelectToolSelected := True;
+
+
+
+
+  SetLength(Figures, Length(figures) - 1);
 end;
 
 begin

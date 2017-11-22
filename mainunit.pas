@@ -110,6 +110,7 @@ procedure TEditor.ButtonsDown(Sender: TObject);
 var
   Parampanel: TPanel;
 begin
+  if SelectToolSelected then SetLength(Figures, Length(figures) - 1);
   CurrentTool := Tool[(Sender as TSpeedbutton).tag];
   ParamPanel := TPanel.Create(Editor);
   ParamPanel.Top := 210;
