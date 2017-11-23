@@ -4,24 +4,25 @@ Interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Menus, StdCtrls, ActnList, ColorBox, Spin, GraphMath, ScaleUnit, LCLType, Grids,
-  LCLIntf, Buttons, Math, FPCanvas, TypInfo, LCL, Windows;
+  Menus, ActnList, GraphMath, ScaleUnit, LCLType, LCLIntf, LCL;
 
 type
-  TFigureClass    = class  of TFigure;
-  tempPointsArray = array[0..3] of TPoint;
-  PolygonPointsArray = array of TPoint;
-  StringArray = array of string;
+
+TFigureClass    = class  of TFigure;
+tempPointsArray = array[0..3] of TPoint;
+PolygonPointsArray = array of TPoint;
+StringArray = array of string;
 
 TFigure = class
   Selected: boolean;
   FigureRegion: HRGN;
+  Points: array of TFloatPoint;
   procedure Draw(ACanvas:TCanvas); virtual;abstract;
   procedure SetRegion; Virtual; abstract;
+  procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas);  virtual;
 end;
 
 TLittleFigure = class(TFigure)
-  Points: array of TFloatPoint;
   PenColor: TColor;
   PenStyle: TPenStyle;
   Width: integer;
@@ -69,14 +70,11 @@ TRoundedRectangle = class (TBigFigure)
   procedure SetRegion; override;
 end;
 
-function CreateRectAroundLine(p1,p2: TPoint; FigurePenWidth: integer):
-  tempPointsArray;
-
+function CreateRectAroundLine(p1,p2: TPoint; FigurePenWidth: integer): tempPointsArray;
 
 var
   Figures: array of TFigure;
   layer: array of Tfigure;
-
 
 Implementation
 
@@ -104,6 +102,34 @@ begin
     Result[3].x := p1.x+5+FigurePenWidth;
     Result[3].y := p1.y-FigurePenWidth div 2;
   end;
+end;
+
+procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas);
+var
+  lP,hP, pt1, pt2: TPoint;
+begin
+  Canvas.Pen.Color := clBlack;
+  Canvas.Brush.Color := clWhite;
+  Canvas.Pen.Style := psSolid;
+  Canvas.Brush.Style := bsSolid;
+  Canvas.Pen.Width := 1;
+
+  AFigure.Points[0] := pt1;
+  AFigure.Points[1] := pt2;
+
+
+  if Pt1.x < Pt2.x then lP.x := Pt1.X else lP.x := Pt2.X;
+  if Pt1.y < Pt2.y then lP.y := Pt1.y else lP.y := Pt2.y;
+
+  if Pt1.x > Pt2.x then hP.x := Pt1.X else hP.x := Pt2.X;
+  if Pt1.y > Pt2.y then hP.x := Pt1.X else hP.x := Pt2.X;
+
+  Canvas.Rectangle(lp.X-5, lP.y-5, lP.x+5, lP.y+5);
+  Canvas.Rectangle(hP.x-5, hP.y-5, hP.x+5, hP.y+5);
+  Canvas.Rectangle(hP.x-5, lP.y-5, hP.x+5, lP.y+5);
+  Canvas.Rectangle(lP.x-5, hP.y-5, lP.x+5, hP.y+5);
+  Canvas.Pen.Style := psDash;
+  Canvas.Frame(lP.x-5, lP.y-5,hP.x+5, hP.y+5);
 end;
 
 procedure TLittleFigure.Draw(ACanvas:TCanvas);
@@ -176,8 +202,8 @@ procedure TRectangle.SetRegion;
 var
   tempRect: TRect;
 begin
-  tempRect.TopLeft := WorldToScreen(Points[low(Points)]);
-  tempRect.BottomRight := WorldToScreen(Points[high(Points)]);
+  tempRect.TopLeft := WorldToScreen(Points[0]);
+  tempRect.BottomRight := WorldToScreen(Points[1]);
   FigureRegion := CreateRectRgn(tempRect.Left,tempRect.Top,tempRect.Right,
     tempRect.Bottom);
 end;
@@ -186,8 +212,8 @@ procedure TEllipce.SetRegion;
 var
   tempRect: TRect;
 begin
-  tempRect.TopLeft := WorldToScreen(Points[low(Points)]);
-  tempRect.BottomRight := WorldToScreen(Points[high(Points)]);
+  tempRect.TopLeft := WorldToScreen(Points[0]);
+  tempRect.BottomRight := WorldToScreen(Points[1]);
   FigureRegion := CreateEllipticRgn(tempRect.Left,tempRect.Top,tempRect.Right,
     tempRect.Bottom);
 end;
@@ -196,8 +222,8 @@ procedure TRoundedRectangle.SetRegion;
 var
   tempRect: TRect;
 begin
-  tempRect.TopLeft := WorldToScreen(Points[low(Points)]);
-  tempRect.BottomRight := WorldToScreen(Points[high(Points)]);
+  tempRect.TopLeft := WorldToScreen(Points[0]);
+  tempRect.BottomRight := WorldToScreen(Points[1]);
   FigureRegion := CreateRoundRectRgn(tempRect.Left,tempRect.Top,tempRect.Right,
     tempRect.Bottom,RoundingRadiusX,RoundingRadiusY);
 end;
@@ -207,8 +233,8 @@ var
   tempPoints: tempPointsArray;
   p1,p2: TPoint;
 begin
-  p1 := WorldToScreen(Points[low(Points)]);
-  p2 := WorldToScreen(Points[high(Points)]);
+  p1 := WorldToScreen(Points[0]);
+  p2 := WorldToScreen(Points[1]);
   tempPoints := CreateRectAroundLine(p1,p2,Width);
   FigureRegion := CreatePolygonRgn(tempPoints,length(tempPoints),winding);
 end;

@@ -5,7 +5,7 @@ unit ScaleUnit;
 interface
 
 uses
-  Classes, SysUtils, GraphMath;
+  Classes, SysUtils, GraphMath, Menus, ActnList,LCLType, LCLIntf, LCL;
 
  function WorldToScreen (APoint: TFloatPoint): TPoint;
  function ScreenToWorld (APoint: TPoint): TFloatPoint;

@@ -5,7 +5,9 @@ unit ToolsUnit;
 interface
 
 uses
-  Classes, SysUtils, FiguresUnit, Graphics, GraphMath, ScaleUnit, ExtCtrls, StdCtrls, Spin, ColorBox, LCLType;
+  Classes, SysUtils, FiguresUnit, Graphics, GraphMath, ScaleUnit, ExtCtrls, StdCtrls, Spin, ColorBox,
+  LCLType, LCLIntf, LCL;
+  // Buttons, Math, FPCanvas, TypInfo,  Windows;
 
 type
 
@@ -53,6 +55,7 @@ psDash, psDashDot, psDashDotDot);
 end;
 
 TFigureTool = class
+  Points: array of TFloatPoint;
   Icons: string;
   Param: array of TParam;
   procedure MouseDown(AX: integer;AY: integer); virtual; abstract;
@@ -71,47 +74,47 @@ TBigFigureTool = class(TLittleFigureTool)
 end;
 
 TPolyLineTool = class(TLittleFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
 end;
 
 TLineTool = class(TLittleFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
 end;
 
 TEllipceTool = class(TBigFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
 end;
 
 TRectangleTool = class(TBigFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
 end;
 
 TPaw = class(TFigureTool)
   FirstPoint: TPoint;
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
 Tmagnifier = class(TFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
   procedure MouseUp(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
 TRoundedRectangleTool = class(TBigFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
 end;
 
 TSelectTool = class(TFigureTool)
-  procedure MouseDown(AX: integer;AY: integer); override;
+  procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
   procedure MouseUp(X: integer;Y: integer); override;
   procedure ParamListCreate(); override;
@@ -368,16 +371,16 @@ begin
   SetLength(Figures, Length(Figures) - 1);
 end;
 
-procedure TMagnifier.MouseDown(AX: integer;AY: integer);
+procedure TMagnifier.MouseDown(X: integer;Y: integer);
 var
   AFigure: TRectangleMagnifier;
 begin
   SetLength(Figures, Length(figures) + 1);
-  Figures[high(Figures)] := TRectangleMagnifier.Create();           ////
+  Figures[high(Figures)] := TRectangleMagnifier.Create();
   AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
   SetLength(AFigure.Points, 2);
-  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
-  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
+  AFigure.Points[0] := ScreenToWorld(Point(X,Y));
+  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
 end;
 
 procedure TMagnifier.MouseMove(X: integer;Y: integer);
@@ -385,9 +388,9 @@ begin
   (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));
 end;
 
-procedure TPaw.MouseDown(AX: integer;AY: integer);
+procedure TPaw.MouseDown(X: integer;Y: integer);
 begin
-  FirstPoint := Point(AX,AY);
+  FirstPoint := Point(X,Y);
 end;
 
 procedure TPaw.MouseMove(X: integer;Y: integer);
@@ -397,7 +400,7 @@ begin
   FirstPoint:=Point(X,Y);
 end;
 
-procedure TPolyLineTool.MouseDown(AX: integer;AY: integer);
+procedure TPolyLineTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TLittleFigure;
 
@@ -406,14 +409,14 @@ begin
   Figures[high(Figures)] := TPolyLine.Create();
   AFigure := (Figures[high(Figures)] as TLittleFigure);
   SetLength((Figures[high(Figures)] as TLittleFigure).Points, Length((Figures[high(Figures)] as TLittleFigure).points) + 1);
-  (Figures[high(Figures)] as TLittleFigure).Points[high((Figures[high(Figures)] as TLittleFigure).Points)] := ScreenToWorld(Point(AX,AY));
+  (Figures[high(Figures)] as TLittleFigure).Points[high((Figures[high(Figures)] as TLittleFigure).Points)] := ScreenToWorld(Point(X,Y));
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.PenStyle := APenStyle;
-  MaxMin(Point(AX,AY));
+  MaxMin(Point(X,Y));
 end;
 
-procedure TLineTool.MouseDown(AX: integer;AY: integer);
+procedure TLineTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TLittleFigure;
 begin
@@ -421,15 +424,15 @@ begin
   Figures[high(Figures)] := TLine.Create();
   AFigure := (Figures[high(Figures)] as TLittleFigure);
   SetLength(AFigure.Points, 2);
-  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
-  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
+  AFigure.Points[0] := ScreenToWorld(Point(X,Y));
+  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.PenStyle := APenStyle;
-  MaxMin(Point(AX,AY));
+  MaxMin(Point(X,Y));
 end;
 
-procedure TRectangleTool.MouseDown(AX: integer;AY: integer);
+procedure TRectangleTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TBigFigure;
 begin
@@ -437,17 +440,17 @@ begin
   Figures[high(Figures)] := TRectangle.Create();
   AFigure := (Figures[high(Figures)] as TBigFigure);
   SetLength(AFigure.Points, 2);
-  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
-  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
+  AFigure.Points[0] := ScreenToWorld(Point(X,Y));
+  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.BrushColor := ABrushColor;
   AFigure.PenStyle := APenStyle;
   AFigure.BrushStyle := ABrushStyle;
-  MaxMin(Point(AX,AY));
+  MaxMin(Point(X,Y));
 end;
 
-procedure TRoundedRectangleTool.MouseDown(AX: integer;AY: integer);
+procedure TRoundedRectangleTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TBigFigure;
 begin
@@ -455,8 +458,8 @@ begin
   Figures[high(Figures)] := TRoundedRectangle.Create();
   AFigure := (Figures[high(Figures)] as TBigFigure);
   SetLength(AFigure.Points, 2);
-  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
-  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
+  AFigure.Points[0] := ScreenToWorld(Point(X,Y));
+  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.BrushColor := ABrushColor;
@@ -464,10 +467,10 @@ begin
   AFigure.RoundingRadiusY:= ARadiusY;
   AFigure.PenStyle := APenStyle;
   AFigure.BrushStyle := ABrushStyle;
-  MaxMin(Point(AX,AY));
+  MaxMin(Point(X,Y));
 end;
 
-procedure TEllipceTool.MouseDown(AX: integer;AY: integer);
+procedure TEllipceTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TBigFigure;
 begin
@@ -475,14 +478,14 @@ begin
   Figures[high(Figures)] := TEllipce.Create();
   AFigure := (Figures[high(Figures)] as TBigFigure);
   SetLength(AFigure.Points, 2);
-  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
-  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
+  AFigure.Points[0] := ScreenToWorld(Point(X,Y));
+  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.BrushColor := ABrushColor;
   AFigure.PenStyle := APenStyle;
   AFigure.BrushStyle := ABrushStyle;
-  MaxMin(Point(AX,AY));
+  MaxMin(Point(X,Y));
 end;
 
 procedure TLineTool.MouseMove(X: integer;Y: integer);
@@ -516,7 +519,7 @@ begin
   MaxMin(Point(X,Y));
 end;
 
-procedure TSelectTool.MouseDown(AX: Integer; AY: Integer);
+procedure TSelectTool.MouseDown(X: Integer; Y: Integer);
 var
   AFigure: TRectangleMagnifier;
 begin
@@ -524,10 +527,8 @@ begin
   Figures[high(Figures)] := TRectangleMagnifier.Create();
   AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
   SetLength(AFigure.Points, 2);
-  AFigure.Points[0] := ScreenToWorld(Point(AX,AY));
-  AFigure.Points[1] := ScreenToWorld(Point(AX,AY));
-
-
+  AFigure.Points[0] := ScreenToWorld(Point(X,Y));
+  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
 
 end;
 
@@ -537,12 +538,26 @@ begin
 end;
 
 procedure TSelectTool.MouseUp(X: Integer; Y: Integer);
+var
+  i: integer;
+  FigureRegion, SelectRegion: HRGN;
 begin
-  SelectToolSelected := True;
+   SelectRegion := CreateRectRgn((WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).x),
+                              (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).y),
+                              (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).x),
+                              (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).y));
+  for i:=0 to high(Figures) - 1 do begin
 
+   Figures[i].SetRegion;
 
+   if (CombineRgn(SelectRegion,Figures[i].FigureRegion,
+            Figures[high(Figures)].FigureRegion,RGN_AND) <> NULLREGION) then
+                      Begin
+             Figures[i].Selected := True;
+          Figures[i].DrawSelection(Figures[i], PB.Canvas);
+                      end;
 
-
+end;
   SetLength(Figures, Length(figures) - 1);
 end;
 
@@ -560,7 +575,6 @@ begin
   AWidth := 1;
   ARadiusX := 30;
   ARadiusY := 30;
-  ABrushStyle := bsSolid;
   APenStyle := psSolid;
   SelectedPStyleIndex := 0;
   SelectedBStyleIndex := 0;

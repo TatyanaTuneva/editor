@@ -1,7 +1,7 @@
 object Editor: TEditor
   Left = 315
   Height = 728
-  Top = 102
+  Top = 8
   Width = 1362
   Caption = 'Редактор'
   ClientHeight = 703
