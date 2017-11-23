@@ -20,7 +20,7 @@ TFigure = class
   Points: array of TFloatPoint;
   procedure Draw(ACanvas:TCanvas); virtual;abstract;
   procedure SetRegion; Virtual; abstract;
-  procedure DrawSelection(Point1,Point2: TFloatPoint; Canvas: TCanvas);   virtual;
+  procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas);   virtual;
 end;
 
 TLittleFigure = class(TFigure)
@@ -80,38 +80,18 @@ var
 Implementation
 
 
-{procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas);
+procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas);
 var
-  lP,hP, pt1, pt2: TPoint;
+  Point1, Point2, a:TFloatPoint;
+  i: integer;
+  max,min: TFloatPoint;
 begin
-  Canvas.Pen.Color := clBlack;
-  Canvas.Brush.Color := clWhite;
-  Canvas.Pen.Style := psSolid;
-  Canvas.Brush.Style := bsSolid;
-  Canvas.Pen.Width := 1;
+If length(AFigure.Points) = 2 then begin
+   Point1.X := AFigure.Points[0].X;
+   Point1.Y := AFigure.Points[0].Y;
+   Point2.X := AFigure.Points[1].X;
+   Point2.Y := AFigure.Points[1].Y;
 
-  pt1 := AFigure.Points[0];
-  pt2 := AFigure.Points[1];
-
- // if Pt1.x < Pt2.x then lP.x := Pt1.X else lP.x := Pt2.X;
-  //if Pt1.y < Pt2.y then lP.y := Pt1.y else lP.y := Pt2.y;
-
-  //if Pt1.x > Pt2.x then hP.x := Pt1.X else hP.x := Pt2.X;
- // if Pt1.y > Pt2.y then hP.x := Pt1.X else hP.x := Pt2.X;
-
-  //Canvas.Rectangle(lp.X-5, lP.y-5, lP.x+5, lP.y+5);
-  //Canvas.Rectangle(hP.x-5, hP.y-5, hP.x+5, hP.y+5);
-  //Canvas.Rectangle(hP.x-5, lP.y-5, hP.x+5, lP.y+5);
-  //Canvas.Rectangle(lP.x-5, hP.y-5, lP.x+5, hP.y+5);
-  //Canvas.Pen.Style := psDash;
-  //Canvas.Frame(lP.x-5, lP.y-5,hP.x+5, hP.y+5);
-  Canvas.Frame(lP.x-5, lP.y-5,hP.x+5, hP.y+5);
-end;  }
-
-procedure TFigure.DrawSelection(Point1,Point2: TFloatPoint; Canvas: TCanvas);
-var
-  a:TFloatPoint;
-begin
   if (Point1.X>Point2.X) then
     begin
       a.X:=Point1.X;
@@ -127,8 +107,26 @@ begin
   Canvas.Pen.Color := clBlack;
   Canvas.Pen.Width := 1;
   Canvas.Pen.Style := psDash;
-  Canvas.Frame  (WorldToScreen(Point1).x-5,WorldToScreen(Point1).y-5,
-                 WorldToScreen(Point2).x+5,WorldToScreen(Point2).y+5);
+  Canvas.Frame(WorldToScreen(Point1).x-5,WorldToScreen(Point1).y-5,
+               WorldToScreen(Point2).x+5,WorldToScreen(Point2).y+5);
+
+ end else begin
+    max := AFigure.Points[1];
+    min := AFigure.Points[1];
+   for i:=0 to length(AFigure.Points) do begin
+    if AFigure.Points[i].X > max.x then max.x := AFigure.Points[i].X;
+    if AFigure.Points[i].Y > max.y then max.y := AFigure.Points[i].y;
+
+    if AFigure.Points[i].X < min.x then min.x := AFigure.Points[i].X;
+    if AFigure.Points[i].Y < min.y then min.y := AFigure.Points[i].Y;
+   end;
+
+    Canvas.Pen.Color := clBlack;
+    Canvas.Pen.Width := 1;
+    Canvas.Pen.Style := psDash;
+    Canvas.Frame(WorldToScreen(min).x-5,WorldToScreen(min).y-5,
+                 WorldToScreen(max).x+5,WorldToScreen(max).y+5);
+ end;
 end;
 
 procedure TLittleFigure.Draw(ACanvas:TCanvas);

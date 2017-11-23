@@ -169,7 +169,7 @@ var
 begin
   for i := 0 to high(Figures) do begin
     Figures[i].Draw(PB.Canvas);
-    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i].Points[0], Figures[i].Points[1], PB.Canvas);
+    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i], PB.Canvas);
   end;
   ScrollBarVertical.Max := trunc(MaxPoint.Y);
   ScrollBarVertical.Min := trunc(MinPoint.Y);
