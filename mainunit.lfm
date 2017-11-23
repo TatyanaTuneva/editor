@@ -1,8 +1,12 @@
 object Editor: TEditor
-  Left = 315
+  Left = 459
   Height = 728
-  Top = 8
+  Top = 158
   Width = 1362
+  HorzScrollBar.Page = 287
+  HorzScrollBar.Range = 287
+  VertScrollBar.Page = 693
+  VertScrollBar.Range = 693
   Caption = 'Редактор'
   ClientHeight = 703
   ClientWidth = 1362
@@ -11,7 +15,6 @@ object Editor: TEditor
   OnCreate = FormCreate
   LCLVersion = '1.6.4.0'
   object PB: TPaintBox
-    AnchorSideBottom.Control = ToolPanel
     Cursor = crCross
     Left = 160
     Height = 681
@@ -123,6 +126,21 @@ object Editor: TEditor
       object Exit_: TMenuItem
         Caption = 'Выход'
         OnClick = Exit_Click
+      end
+    end
+    object Correction: TMenuItem
+      Caption = 'Правка'
+      object SelectAll: TMenuItem
+        Caption = 'Выделить все'
+      end
+      object DeleteSelected: TMenuItem
+        Caption = 'Удалить выделенное'
+      end
+      object SelectedUp: TMenuItem
+        Caption = 'Поднять выделенное'
+      end
+      object SelectedDown: TMenuItem
+        Caption = 'Опустить выделенное'
       end
     end
     object About: TMenuItem

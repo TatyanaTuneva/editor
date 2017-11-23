@@ -60,17 +60,19 @@ TFigureTool = class
   Param: array of TParam;
   procedure MouseDown(AX: integer;AY: integer); virtual; abstract;
   procedure MouseMove(X: integer;Y: integer); virtual; abstract;
-  procedure Mouseup(X: integer;Y: integer); virtual;
+  procedure Mouseup(X: integer;Y: integer; ACanvas: TCanvas); virtual; abstract;
   procedure ParamListCreate(); virtual;abstract;
   procedure ParamsCreate(Panel: TPanel);
 end;
 
 TLittleFigureTool = class(TFigureTool)
   procedure ParamListCreate(); override;
+  procedure Mouseup(X: integer;Y: integer; ACanvas: TCanvas); override;
 end;
 
 TBigFigureTool = class(TLittleFigureTool)
   procedure ParamListCreate(); override;
+  procedure Mouseup(X: integer;Y: integer; ACanvas: TCanvas); override;
 end;
 
 TPolyLineTool = class(TLittleFigureTool)
@@ -103,7 +105,7 @@ end;
 Tmagnifier = class(TFigureTool)
   procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure MouseUp(X: integer;Y: integer); override;
+  procedure MouseUp(X: integer;Y: integer; ACanvas: TCanvas); override;
   procedure ParamListCreate(); override;
 end;
 
@@ -116,7 +118,7 @@ end;
 TSelectTool = class(TFigureTool)
   procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
-  procedure MouseUp(X: integer;Y: integer); override;
+  procedure MouseUp(X: integer;Y: integer; ACanvas: TCanvas); override;
   procedure ParamListCreate(); override;
 end;
 
@@ -129,6 +131,7 @@ var
   ABrushStyle: TBrushStyle;
   SelectedBStyleIndex, SelectedPStyleIndex: integer;
   SelectToolSelected: Boolean;
+
 
 implementation
 
@@ -307,6 +310,8 @@ begin
   ARadiusY := (Sender as TSpinEdit).Value;
 end;
 
+//*******************PARAMLIST*************************************************************************
+
 procedure TLittleFigureTool.ParamListCreate();
 begin
   SetLength(Param, Length(Param) + 3);
@@ -343,6 +348,8 @@ procedure TSelectTool.ParamListCreate();
 begin
 end;
 
+//***********************PARAMSCREATE*************************************************************
+
 procedure TFigureTool.paramscreate(Panel: TPanel);
 var
   i, pos: Integer;
@@ -360,12 +367,17 @@ begin
   Atool.ParamListCreate();
 end;
 
-procedure TFigureTool.MouseUp(X: Integer;Y: Integer);
+procedure TBigFigureTool.MouseUp(X: Integer;Y: Integer; ACanvas: TCanvas);
 begin
-
+ // Figures[High(Figures)].Selected := False;
 end;
 
-procedure TMagnifier.MouseUp(X: integer;Y: integer);
+procedure TLittleFigureTool.MouseUp(X: Integer;Y: Integer; ACanvas: TCanvas);
+begin
+//  Figures[High(Figures)].Selected := False;
+end;
+
+procedure TMagnifier.MouseUp(X: integer;Y: integer; ACanvas: TCanvas);
 begin
   RectZoom(AHeightPB,AWidthPB,(Figures[high(Figures)] as TLittleFigure).Points[0],(Figures[high(Figures)] as TLittleFigure).Points[1]);
   SetLength(Figures, Length(Figures) - 1);
@@ -529,7 +541,6 @@ begin
   SetLength(AFigure.Points, 2);
   AFigure.Points[0] := ScreenToWorld(Point(X,Y));
   AFigure.Points[1] := ScreenToWorld(Point(X,Y));
-
 end;
 
 procedure TSelectTool.MouseMove(X: Integer; Y: Integer);
@@ -537,24 +548,26 @@ begin
   (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));                                                                    /////////
 end;
 
-procedure TSelectTool.MouseUp(X: Integer; Y: Integer);
+procedure TSelectTool.MouseUp(X: Integer; Y: Integer; ACanvas: TCanvas);
 var
-  i: integer;
-  FigureRegion, SelectRegion: HRGN;
+  i: integer;                                                            //createrectrgn принимает интегер
+  SelectRegion: HRGN;
+  Param_: Integer;
 begin
    SelectRegion := CreateRectRgn((WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).x),
-                              (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).y),
-                              (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).x),
-                              (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).y));
+                                 (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).y),
+                                 (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).x),
+                                 (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).y));
   for i:=0 to high(Figures) - 1 do begin
 
    Figures[i].SetRegion;
 
-   if (CombineRgn(SelectRegion,Figures[i].FigureRegion,
-            Figures[high(Figures)].FigureRegion,RGN_AND) <> NULLREGION) then
+   if (CombineRgn(SelectRegion,Figures[i].Region,
+            Figures[high(Figures)].Region,RGN_AND) <> NULLREGION) then
                       Begin
-             Figures[i].Selected := True;
-          Figures[i].DrawSelection(Figures[i], PB.Canvas);
+                         Figures[i].Selected := True;
+                         Figures[i].DrawSelection(Figures[i], ACanvas);
+                         if then param_:=1;
                       end;
 
 end;

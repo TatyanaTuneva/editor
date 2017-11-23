@@ -13,6 +13,11 @@ type
   { TEditor }
 
   TEditor = class(TForm)
+    Correction: TMenuItem;
+    SelectedDown: TMenuItem;
+    SelectedUp: TMenuItem;
+    SelectAll: TMenuItem;
+    DeleteSelected: TMenuItem;
     ShowAllButton: TButton;
     Clear: TButton;
     Back: TButton;
@@ -33,7 +38,7 @@ type
     procedure ClearClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+      Shift: TShiftState; X, Y: Integer; ACanvas: TCanvas);
     procedure FormPaint(Sender: TObject);
     procedure Exit_Click(Sender: TObject);
     procedure AuthorClick(Sender: TObject);
@@ -70,10 +75,10 @@ begin
 end;
 
 procedure TEditor.MouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
+  Shift: TShiftState; X, Y: Integer; ACanvas: TCanvas);
 begin
   IsDrawing := False;
-  CurrentTool.MouseUp(X, Y);
+  CurrentTool.MouseUp(X, Y, PB.Canvas);
   Invalidate;
 end;
 
@@ -109,8 +114,8 @@ end;
 procedure TEditor.ButtonsDown(Sender: TObject);
 var
   Parampanel: TPanel;
+  i: Integer;
 begin
-  if SelectToolSelected then SetLength(Figures, Length(figures) - 1);
   CurrentTool := Tool[(Sender as TSpeedbutton).tag];
   ParamPanel := TPanel.Create(Editor);
   ParamPanel.Top := 210;
@@ -119,6 +124,7 @@ begin
   ParamPanel.Height := 420;
   ParamPanel.Parent := ToolPanel;
   CurrentTool.ParamsCreate(ParamPanel);
+     for i := 0 to High(Figures) do Figures[i].Selected := False;
   Invalidate;
 end;
 
@@ -140,6 +146,7 @@ var
 begin
   for i := 0 to high(Figures) do begin
     Figures[i].Draw(PB.Canvas);
+    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i], PB.Canvas);
   end;
   ScrollBarVertical.Max := trunc(MaxPoint.Y);
   ScrollBarVertical.Min := trunc(MinPoint.Y);
