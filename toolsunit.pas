@@ -550,7 +550,7 @@ end;
 
 procedure TSelectTool.MouseUp(X: Integer; Y: Integer; ACanvas: TCanvas);
 var
-  i: integer;                                                            //createrectrgn принимает интегер
+  i: integer;
   SelectRegion: HRGN;
   Param_: Integer;
 begin
@@ -562,12 +562,10 @@ begin
 
    Figures[i].SetRegion;
 
-   if (CombineRgn(SelectRegion,Figures[i].Region,
-            Figures[high(Figures)].Region,RGN_AND) <> NULLREGION) then
+   if (CombineRgn(SelectRegion,Figures[i].Region,Figures[high(Figures)].Region,RGN_AND)
+            <> NullRegion) then
                       Begin
                          Figures[i].Selected := True;
-                         Figures[i].DrawSelection(Figures[i], ACanvas);
-                         if then param_:=1;
                       end;
 
 end;

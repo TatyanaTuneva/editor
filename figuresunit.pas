@@ -20,7 +20,7 @@ TFigure = class
   Points: array of TFloatPoint;
   procedure Draw(ACanvas:TCanvas); virtual;abstract;
   procedure SetRegion; Virtual; abstract;
-  procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas);  virtual;
+  procedure DrawSelection(Point1,Point2: TFloatPoint; Canvas: TCanvas);   virtual;
 end;
 
 TLittleFigure = class(TFigure)
@@ -80,7 +80,7 @@ var
 Implementation
 
 
-procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas);
+{procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas);
 var
   lP,hP, pt1, pt2: TPoint;
 begin
@@ -93,18 +93,42 @@ begin
   pt1 := AFigure.Points[0];
   pt2 := AFigure.Points[1];
 
-  if Pt1.x < Pt2.x then lP.x := Pt1.X else lP.x := Pt2.X;
-  if Pt1.y < Pt2.y then lP.y := Pt1.y else lP.y := Pt2.y;
+ // if Pt1.x < Pt2.x then lP.x := Pt1.X else lP.x := Pt2.X;
+  //if Pt1.y < Pt2.y then lP.y := Pt1.y else lP.y := Pt2.y;
 
-  if Pt1.x > Pt2.x then hP.x := Pt1.X else hP.x := Pt2.X;
-  if Pt1.y > Pt2.y then hP.x := Pt1.X else hP.x := Pt2.X;
+  //if Pt1.x > Pt2.x then hP.x := Pt1.X else hP.x := Pt2.X;
+ // if Pt1.y > Pt2.y then hP.x := Pt1.X else hP.x := Pt2.X;
 
-  Canvas.Rectangle(lp.X-5, lP.y-5, lP.x+5, lP.y+5);
-  Canvas.Rectangle(hP.x-5, hP.y-5, hP.x+5, hP.y+5);
-  Canvas.Rectangle(hP.x-5, lP.y-5, hP.x+5, lP.y+5);
-  Canvas.Rectangle(lP.x-5, hP.y-5, lP.x+5, hP.y+5);
-  Canvas.Pen.Style := psDash;
+  //Canvas.Rectangle(lp.X-5, lP.y-5, lP.x+5, lP.y+5);
+  //Canvas.Rectangle(hP.x-5, hP.y-5, hP.x+5, hP.y+5);
+  //Canvas.Rectangle(hP.x-5, lP.y-5, hP.x+5, lP.y+5);
+  //Canvas.Rectangle(lP.x-5, hP.y-5, lP.x+5, hP.y+5);
+  //Canvas.Pen.Style := psDash;
+  //Canvas.Frame(lP.x-5, lP.y-5,hP.x+5, hP.y+5);
   Canvas.Frame(lP.x-5, lP.y-5,hP.x+5, hP.y+5);
+end;  }
+
+procedure TFigure.DrawSelection(Point1,Point2: TFloatPoint; Canvas: TCanvas);
+var
+  a:TFloatPoint;
+begin
+  if (Point1.X>Point2.X) then
+    begin
+      a.X:=Point1.X;
+      Point1.X:=Point2.X;
+      Point2.X:=a.X;
+    end;
+  if (Point1.Y>Point2.Y) then
+    begin
+      a.Y:=Point1.Y;
+      Point1.Y:=Point2.Y;
+      Point2.Y:=a.Y;
+    end;
+  Canvas.Pen.Color := clBlack;
+  Canvas.Pen.Width := 1;
+  Canvas.Pen.Style := psDash;
+  Canvas.Frame  (WorldToScreen(Point1).x-5,WorldToScreen(Point1).y-5,
+                 WorldToScreen(Point2).x+5,WorldToScreen(Point2).y+5);
 end;
 
 procedure TLittleFigure.Draw(ACanvas:TCanvas);
@@ -172,9 +196,6 @@ end;
 procedure TLittleFigure.SetRegion;
 begin
 end;
-
-
-////ПОШЛА ЖАРААА
 
 procedure TRectangle.SetRegion;
 var
@@ -259,10 +280,6 @@ begin
       tempPoints[3].y := p1.y-Width div 2;
     end;
 end;
-
-
-
-// ЖАРА ЗАКОНЧИЛАСЬ
 
 
 begin

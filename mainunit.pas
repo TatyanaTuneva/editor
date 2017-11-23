@@ -36,6 +36,7 @@ type
     procedure BackClick(Sender: TObject);
     procedure ButtonsDown(Sender: TObject);
     procedure ClearClick(Sender: TObject);
+    procedure DeleteSelectedClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer; ACanvas: TCanvas);
@@ -47,6 +48,9 @@ type
     procedure MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure ScrollBarScroll(Sender: TObject;
       ScrollCode: TScrollCode; var ScrollPos: Integer);
+    procedure SelectAllClick(Sender: TObject);
+    procedure SelectedDownClick(Sender: TObject);
+    procedure SelectedUpClick(Sender: TObject);
     procedure ShowAllButtonClick(Sender: TObject);
     procedure ZoomChange(Sender: TObject);
 
@@ -140,13 +144,32 @@ begin
   Invalidate;
 end;
 
+procedure TEditor.DeleteSelectedClick(Sender: TObject);
+var
+  i, j: Integer;
+begin
+  j := 0;
+  for i := 0 to high(Figures) do
+    begin
+      if (Figures[i].Selected) then
+        FreeAndNil(Figures[i])
+      else
+      begin
+        Figures[j] := Figures[i];
+        j := j + 1;
+      end;
+    end;
+  setLength(Figures, j);
+  Invalidate;
+end;
+
 procedure TEditor.FormPaint(Sender: TObject);
 var
   i: integer;
 begin
   for i := 0 to high(Figures) do begin
     Figures[i].Draw(PB.Canvas);
-    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i], PB.Canvas);
+    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i].Points[0], Figures[i].Points[1], PB.Canvas);
   end;
   ScrollBarVertical.Max := trunc(MaxPoint.Y);
   ScrollBarVertical.Min := trunc(MinPoint.Y);
@@ -185,6 +208,58 @@ procedure TEditor.ScrollBarScroll(Sender: TObject;
   ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
   Offset := Point(ScrollBarHorizontal.Position, ScrollBarVertical.Position);
+  Invalidate;
+end;
+
+procedure TEditor.SelectAllClick(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i:=0 to High(Figures) do Figures[i].Selected := True;
+  Invalidate;
+end;
+
+procedure TEditor.SelectedDownClick(Sender: TObject);
+var
+  i, j, k: Integer;
+  Figure: TFigure;
+begin
+  k := 0;
+  for i := high(Figures) downto 0 do
+    begin
+      if (Figures[i].Selected) then
+        begin
+          for j := i downto k + 1  do
+          begin
+            Figure := Figures[j];
+            Figures[j] := Figures[j-1];
+            Figures[j-1] := Figure;
+            k := j
+          end;
+        end;
+    end;
+  Invalidate;
+end;
+
+procedure TEditor.SelectedUpClick(Sender: TObject);
+var
+  i, j, k: Integer;
+  Figure: TFigure;
+begin
+  k := high(Figures);
+  for i := 0 to high(Figures) do
+    begin
+      if (Figures[i].Selected) then
+        begin
+          for j := i to k - 1 do
+          begin
+            Figure := Figures[j];
+            Figures[j] := Figures[j+1];
+            Figures[j+1] := Figure;
+            k := j
+          end;
+        end;
+    end;
   Invalidate;
 end;
 

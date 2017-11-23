@@ -132,15 +132,19 @@ object Editor: TEditor
       Caption = 'Правка'
       object SelectAll: TMenuItem
         Caption = 'Выделить все'
+        OnClick = SelectAllClick
       end
       object DeleteSelected: TMenuItem
         Caption = 'Удалить выделенное'
+        OnClick = DeleteSelectedClick
       end
       object SelectedUp: TMenuItem
         Caption = 'Поднять выделенное'
+        OnClick = SelectedUpClick
       end
       object SelectedDown: TMenuItem
         Caption = 'Опустить выделенное'
+        OnClick = SelectedDownClick
       end
     end
     object About: TMenuItem
