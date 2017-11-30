@@ -11,6 +11,7 @@ uses
  function ScreenToWorld (APoint: TPoint): TFloatPoint;
  procedure MaxMin(APoint: TFloatPoint);
  procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
+ function Scrn2Wrld(P: TPoint): TFloatPoint;
 
 var
  zoom: double;
@@ -19,7 +20,13 @@ var
  AHeight, AWidth: Extended;
  AHeightPB, AWidthPB: Extended;
 
-implementation
+Implementation
+
+function Scrn2Wrld(P: TPoint): TFloatPoint;
+begin
+  Result.X := (P.x + Offset.x) / Zoom * 100;
+  Result.Y := (P.y + Offset.y) / Zoom * 100;
+end;
 
 procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
 begin

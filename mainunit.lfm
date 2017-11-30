@@ -1,7 +1,7 @@
 object Editor: TEditor
-  Left = 459
+  Left = 473
   Height = 728
-  Top = 158
+  Top = 449
   Width = 1362
   HorzScrollBar.Page = 287
   HorzScrollBar.Range = 287
@@ -59,24 +59,6 @@ object Editor: TEditor
       TabOrder = 1
       Value = 100
     end
-    object Clear: TButton
-      Left = 16
-      Height = 25
-      Top = 176
-      Width = 123
-      Caption = 'Очистить'
-      OnClick = ClearClick
-      TabOrder = 2
-    end
-    object Back: TButton
-      Left = 16
-      Height = 25
-      Top = 216
-      Width = 123
-      Caption = 'Назад'
-      OnClick = BackClick
-      TabOrder = 3
-    end
     object ZoomLabel: TLabel
       Left = 8
       Height = 20
@@ -84,15 +66,6 @@ object Editor: TEditor
       Width = 26
       Caption = 'Зум'
       ParentColor = False
-    end
-    object ShowAllButton: TButton
-      Left = 16
-      Height = 25
-      Top = 136
-      Width = 123
-      Caption = 'Показать все'
-      OnClick = ShowAllButtonClick
-      TabOrder = 4
     end
   end
   object ScrollBarHorizontal: TScrollBar
@@ -130,6 +103,14 @@ object Editor: TEditor
     end
     object Correction: TMenuItem
       Caption = 'Правка'
+      object ClearAll: TMenuItem
+        Caption = 'Очистить все'
+        OnClick = ClearAllClick
+      end
+      object ShowAll: TMenuItem
+        Caption = 'Показать все'
+        OnClick = ShowAllClick
+      end
       object SelectAll: TMenuItem
         Caption = 'Выделить все'
         OnClick = SelectAllClick

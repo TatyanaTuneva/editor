@@ -20,7 +20,7 @@ TFigure = class
   Points: array of TFloatPoint;
   procedure Draw(ACanvas:TCanvas); virtual;abstract;
   procedure SetRegion; Virtual; abstract;
-  procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas);   virtual;
+  procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);   virtual;
 end;
 
 TLittleFigure = class(TFigure)
@@ -79,8 +79,7 @@ var
 
 Implementation
 
-
-procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas);
+procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);
 var
   Point1, Point2, a:TFloatPoint;
   i: integer;
@@ -107,13 +106,13 @@ If length(AFigure.Points) = 2 then begin
   Canvas.Pen.Color := clBlack;
   Canvas.Pen.Width := 1;
   Canvas.Pen.Style := psDash;
-  Canvas.Frame(WorldToScreen(Point1).x-5,WorldToScreen(Point1).y-5,
-               WorldToScreen(Point2).x+5,WorldToScreen(Point2).y+5);
+  Canvas.Frame(WorldToScreen(Point1).x - 5 - Width div 2,WorldToScreen(Point1).y - 5 - Width div 2,
+               WorldToScreen(Point2).x + 5 + Width div 2,WorldToScreen(Point2).y + 5 + Width div 2);
 
  end else begin
-    max := AFigure.Points[1];
-    min := AFigure.Points[1];
-   for i:=0 to length(AFigure.Points) do begin
+    max := AFigure.Points[0];
+    min := AFigure.Points[0];
+   for i:=0 to length(AFigure.Points) - 1 do begin
     if AFigure.Points[i].X > max.x then max.x := AFigure.Points[i].X;
     if AFigure.Points[i].Y > max.y then max.y := AFigure.Points[i].y;
 
@@ -121,11 +120,12 @@ If length(AFigure.Points) = 2 then begin
     if AFigure.Points[i].Y < min.y then min.y := AFigure.Points[i].Y;
    end;
 
+
     Canvas.Pen.Color := clBlack;
     Canvas.Pen.Width := 1;
     Canvas.Pen.Style := psDash;
-    Canvas.Frame(WorldToScreen(min).x-5,WorldToScreen(min).y-5,
-                 WorldToScreen(max).x+5,WorldToScreen(max).y+5);
+    Canvas.Frame(WorldToScreen(min).x - 5 - Width div 2,WorldToScreen(min).y - 5 - Width div 2,
+                 WorldToScreen(max).x + 5 + Width div 2,WorldToScreen(max).y + 5 + Width div 2);
  end;
 end;
 

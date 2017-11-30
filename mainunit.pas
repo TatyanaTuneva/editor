@@ -14,13 +14,12 @@ type
 
   TEditor = class(TForm)
     Correction: TMenuItem;
+    ShowAll: TMenuItem;
+    ClearAll: TMenuItem;
     SelectedDown: TMenuItem;
     SelectedUp: TMenuItem;
     SelectAll: TMenuItem;
     DeleteSelected: TMenuItem;
-    ShowAllButton: TButton;
-    Clear: TButton;
-    Back: TButton;
     ZoomLabel: TLabel;
     ScrollBarHorizontal: TScrollBar;
     ScrollBarVertical: TScrollBar;
@@ -35,6 +34,7 @@ type
     ZoomSpinEdit: TSpinEdit;
     procedure BackClick(Sender: TObject);
     procedure ButtonsDown(Sender: TObject);
+    procedure ClearAllClick(Sender: TObject);
     procedure ClearClick(Sender: TObject);
     procedure DeleteSelectedClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -51,7 +51,7 @@ type
     procedure SelectAllClick(Sender: TObject);
     procedure SelectedDownClick(Sender: TObject);
     procedure SelectedUpClick(Sender: TObject);
-    procedure ShowAllButtonClick(Sender: TObject);
+    procedure ShowAllClick(Sender: TObject);
     procedure ZoomChange(Sender: TObject);
 
 
@@ -122,25 +122,31 @@ var
 begin
   CurrentTool := Tool[(Sender as TSpeedbutton).tag];
   ParamPanel := TPanel.Create(Editor);
-  ParamPanel.Top := 210;
+  ParamPanel.Top := 150;
   Parampanel.LeFt := 5;
   ParamPanel.Width := 155;
   ParamPanel.Height := 420;
   ParamPanel.Parent := ToolPanel;
   CurrentTool.ParamsCreate(ParamPanel);
-     for i := 0 to High(Figures) do Figures[i].Selected := False;
+     for i := 0 to High(Figures) do
+     if not ((Sender as TSpeedbutton).tag = 8) then Figures[i].Selected := False;
   Invalidate;
 end;
 
-procedure TEditor.BackClick(Sender: TObject);
+procedure TEditor.ClearAllClick(Sender: TObject);
 begin
-  if Length(Figures)<>0 then SetLength(Figures, Length(figures) - 1);
+  SetLength(Figures,0);
   Invalidate;
 end;
 
 procedure TEditor.ClearClick(Sender: TObject);
 begin
-  SetLength(Figures,0);
+
+end;
+
+procedure TEditor.BackClick(Sender: TObject);
+begin
+  if Length(Figures)<>0 then SetLength(Figures, Length(figures) - 1);
   Invalidate;
 end;
 
@@ -169,7 +175,7 @@ var
 begin
   for i := 0 to high(Figures) do begin
     Figures[i].Draw(PB.Canvas);
-    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i], PB.Canvas);
+    if Figures[i].Selected then Figures[i].DrawSelection(Figures[i], PB.Canvas, (Figures[I] AS TLittleFigure).WIDTH);
   end;
   ScrollBarVertical.Max := trunc(MaxPoint.Y);
   ScrollBarVertical.Min := trunc(MinPoint.Y);
@@ -263,7 +269,7 @@ begin
   Invalidate;
 end;
 
-procedure TEditor.ShowAllButtonClick(Sender: TObject);
+procedure TEditor.ShowAllClick(Sender: TObject);
 begin
   RectZoom(pB.Height,PB.Width,MinPoint,MaxPoint);
   Invalidate;
