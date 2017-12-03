@@ -1,7 +1,7 @@
 object Editor: TEditor
   Left = 473
   Height = 728
-  Top = 449
+  Top = 263
   Width = 1362
   HorzScrollBar.Page = 287
   HorzScrollBar.Range = 287

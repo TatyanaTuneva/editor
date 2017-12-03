@@ -12,10 +12,11 @@ type
 TFigureClass    = class  of TFigure;
 tempPointsArray = array[0..3] of TPoint;
 PolygonPointsArray = array of TPoint;
-StringArray = array of string;
-
-TFigure = class
+StringArray = array of string;                                   // 1 - line polyline
+                                                                 // 2 - rectangle ellipce
+TFigure = class                                                  // 3 - rrectangle
   Selected: boolean;
+  Index: integer;
   Region: HRGN;
   Points: array of TFloatPoint;
   procedure Draw(ACanvas:TCanvas); virtual;abstract;

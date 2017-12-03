@@ -119,8 +119,7 @@ TSelectTool = class(TFigureTool)
   procedure MouseMove(X: integer;Y: integer); override;
   procedure MouseUp(X: integer;Y: integer; ACanvas: TCanvas); override;
   procedure ParamListCreate(); override;
- // procedure RectSelectTool(Point: TPoint; SelectRegion: HRGN);
- // procedure PointSelectTool(Point: TPoint; SelectRegion: HRGN);
+  procedure SelectParamListCreate();
 end;
 
 TMoverTool = class(TFigureTool)
@@ -139,10 +138,13 @@ var
   APenStyle: TPenStyle;
   ABrushStyle: TBrushStyle;
   SelectedBStyleIndex, SelectedPStyleIndex: integer;
-  SelectToolSelected: Boolean;
-
+  SelectedCreateParamFlag: Boolean;
+  SelectedFigure: TFigureTool;
+  Invalidate_: procedure of Object;
 
 implementation
+
+//*********CREATEPARAMS********************************************************************************************************
 
 procedure TPenColorParam.CreateObjects(Panel: TPanel; pos: integer);
 var
@@ -162,8 +164,13 @@ begin
 end;
 
 procedure TPenColorParam.ChangePenColor(Sender: TObject);
+var
+  i: Integer;
 begin
   APenColor := (Sender as TColorBox).Selected;
+  for I:=0 to High(Figures) do
+    if Figures[i].Selected then (Figures[i] as TLittleFigure).PenColor := APenColor;
+    Invalidate_;
 end;
 
 procedure TPenStyleParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -192,9 +199,14 @@ begin
 end;
 
 procedure TPenStyleParam.ChangePenStyle(Sender: TObject);
+var
+  i: integer;
 begin
   APenStyle := PStyles[(Sender as TComboBox).ItemIndex];
   SelectedPStyleIndex := (Sender as TComboBox).ItemIndex;
+  for I:=0 to High(Figures) do
+  if Figures[i].Selected then (Figures[i] as TLittleFigure).PenStyle := APenStyle;
+   Invalidate_;
 end;
 
 procedure TWidthParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -216,8 +228,13 @@ begin
 end;
 
 procedure TWidthParam.ChangeWidth(Sender: TObject);
+var
+  i: integer;
 begin
  AWidth := (Sender as TSpinEdit).Value;
+ for I:=0 to High(Figures) do
+  if Figures[i].Selected then (Figures[i] as TLittleFigure).Width := AWidth;
+  Invalidate_;
 end;
 
 procedure TBrushColorParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -238,8 +255,14 @@ begin
 end;
 
 procedure TBrushColorParam.ChangeBrushColor(Sender: TObject);
+var
+  i: Integer;
 begin
   ABrushColor := (Sender as TColorBox).Selected;
+  for I:=0 to High(Figures) do
+    if (Figures[i].Selected) and not (Figures[i].Index = 1)
+      then (Figures[i] as TBigFigure).BrushColor := ABrushColor;
+   Invalidate_;
 end;
 
 procedure TBrushStyleParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -268,9 +291,15 @@ begin
 end;
 
 procedure TBrushStyleParam.ChangeBrushStyle(Sender: TObject);
+var
+  i: integer;
 begin
   ABrushStyle := BStyles[(Sender as TComboBox).ItemIndex];
   SelectedBStyleIndex := (Sender as TComboBox).ItemIndex;
+  for I:=0 to High(Figures) do
+    if (Figures[i].Selected) and not (Figures[i].Index = 1)
+      then (Figures[i] as TBigFigure).BrushStyle := ABrushStyle;
+   Invalidate_;
 end;
 
 procedure TRoundingRadiusParamX.CreateObjects(Panel: TPanel; pos: Integer);
@@ -292,8 +321,14 @@ begin
 end;
 
 procedure TRoundingRadiusParamX.ChangeRoundX(Sender: TObject);
+var
+  i: Integer;
 begin
   ARadiusX := (Sender as TSpinEdit).Value;
+  for I:=0 to High(Figures) do
+    if (Figures[i].Selected) and (Figures[i].Index = 3)
+      then (Figures[i] as TRoundedRectangle).RoundingRadiusX := ARadiusX;
+   Invalidate_;
 end;
 
 procedure TRoundingRadiusParamY.CreateObjects(Panel: TPanel; pos: Integer);
@@ -315,12 +350,21 @@ begin
 end;
 
 procedure TRoundingRadiusParamY.ChangeRoundY(Sender: TObject);
+var
+  i: Integer;
 begin
   ARadiusY := (Sender as TSpinEdit).Value;
+  for I:=0 to High(Figures) do
+    if (Figures[i].Selected) and (Figures[i].Index = 3)
+      then (Figures[i] as TRoundedRectangle).RoundingRadiusY := ARadiusY;
+   Invalidate_;
 end;
+
+//*********PARAMLISTCREATE********************************************************************************************************
 
 procedure TLittleFigureTool.ParamListCreate();
 begin
+  SetLength(Param, 0);
   SetLength(Param, Length(Param) + 3);
   Param[High(Param) - 2] := TPenColorParam.Create();
   Param[High(Param) - 1] := TPenStyleParam.Create();
@@ -359,6 +403,8 @@ procedure TMoverTool.ParamListCreate();
 begin
 end;
 
+//*********PARAMSCREATE********************************************************************************************
+
 procedure TFigureTool.ParamsCreate(Panel: TPanel);
 var
   i, pos: Integer;
@@ -367,6 +413,7 @@ begin
     Param[i].CreateObjects(Panel, i * 60);
   end;
 end;
+//*********REGISTERTOOL********************************************************************************************************
 
 procedure RegisterTool(ATool: TFigureTool; S: string);
 begin
@@ -375,6 +422,8 @@ begin
   Tool[high(Tool)].Icons := s;
   Atool.ParamListCreate();
 end;
+
+//*********TFIGURE MOUSEDOWN MOUSEMOVE MOUSEUP********************************************************************************************************
 
 procedure TBigFigureTool.MouseUp(X: Integer;Y: Integer; ACanvas: TCanvas);
 begin
@@ -399,7 +448,6 @@ begin
   AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
   SetLength(AFigure.Points, 2);
   AFigure.Points[0] := ScreenToWorld(Point(X,Y));
-  AFigure.Points[1] := ScreenToWorld(Point(X,Y));
 end;
 
 procedure TMagnifier.MouseMove(X: integer;Y: integer);
@@ -432,6 +480,7 @@ begin
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.PenStyle := APenStyle;
+  AFigure.Index := 1;
   MaxMin(Point(X,Y));
 end;
 
@@ -448,6 +497,7 @@ begin
   AFigure.PenColor := APenColor;
   AFigure.Width := AWidth;
   AFigure.PenStyle := APenStyle;
+  AFigure.Index := 1;
   MaxMin(Point(X,Y));
 end;
 
@@ -466,6 +516,7 @@ begin
   AFigure.BrushColor := ABrushColor;
   AFigure.PenStyle := APenStyle;
   AFigure.BrushStyle := ABrushStyle;
+  AFigure.Index := 2;
   MaxMin(Point(X,Y));
 end;
 
@@ -486,6 +537,7 @@ begin
   AFigure.RoundingRadiusY:= ARadiusY;
   AFigure.PenStyle := APenStyle;
   AFigure.BrushStyle := ABrushStyle;
+  AFigure.Index := 3;
   MaxMin(Point(X,Y));
 end;
 
@@ -504,6 +556,7 @@ begin
   AFigure.BrushColor := ABrushColor;
   AFigure.PenStyle := APenStyle;
   AFigure.BrushStyle := ABrushStyle;
+  AFigure.Index := 2;
   MaxMin(Point(X,Y));
 end;
 
@@ -548,6 +601,7 @@ begin
   SetLength(AFigure.Points, 2);
   AFigure.Points[0] := ScreenToWorld(Point(X,Y));
   AFigure.Points[1] := ScreenToWorld(Point(X,Y));
+  SelectedCreateParamFlag := True;
 end;
 
 procedure TSelectTool.MouseMove(X: Integer; Y: Integer);
@@ -583,6 +637,40 @@ begin
     end;
      end;
   SetLength(Figures, Length(figures) - 1);
+  SelectParamListCreate();
+end;
+
+procedure TSelectTool.SelectParamListCreate();
+var
+  i: Integer;
+  highIndex: Integer;
+  f1: TLittleFigureTool;
+  f2: TBigFigureTool;
+  f3: TRoundedRectangleTool;
+begin
+  highIndex := 0;
+   for i := 0 to high(Figures) do
+     if Figures[i].Selected then
+       if (Figures[i].Index > highIndex) then highIndex := Figures[i].Index;
+
+   f1 := TLittleFigureTool.Create();
+   f2 := TBigFigureTool.Create();
+   f3 := TRoundedRectangleTool.Create();
+
+   case highIndex of
+     1: begin
+          f1.ParamListCreate();
+          SelectedFigure := f1;
+        end;
+     2: begin
+          f2.ParamListCreate();
+          SelectedFigure := f2;
+        end;
+     3: begin
+          f3.ParamListCreate();
+          SelectedFigure := f3;
+        end;
+   end;
 end;
 
 procedure TMoverTool.MouseDown(X: Integer; Y: Integer);

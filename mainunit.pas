@@ -80,9 +80,22 @@ end;
 
 procedure TEditor.MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer; ACanvas: TCanvas);
+var
+  ParamPanel: TPanel;
 begin
   IsDrawing := False;
   CurrentTool.MouseUp(X, Y, PB.Canvas);
+
+  if SelectedCreateParamFlag then begin
+  ParamPanel := TPanel.Create(Editor);
+  ParamPanel.Top := 150;
+  Parampanel.LeFt := 5;
+  ParamPanel.Width := 155;
+  ParamPanel.Height := 420;
+  ParamPanel.Parent := ToolPanel;
+  SelectedFigure.ParamsCreate(ParamPanel);
+  end;
+  SelectedCreateParamFlag := False;
   Invalidate;
 end;
 
@@ -113,6 +126,7 @@ begin
     end;
   ToolButton.Glyph := ToolIcon;
   end;
+  Invalidate_:=@Invalidate;
 end;
 
 procedure TEditor.ButtonsDown(Sender: TObject);
@@ -121,6 +135,7 @@ var
   i: Integer;
 begin
   CurrentTool := Tool[(Sender as TSpeedbutton).tag];
+
   ParamPanel := TPanel.Create(Editor);
   ParamPanel.Top := 150;
   Parampanel.LeFt := 5;
@@ -128,7 +143,8 @@ begin
   ParamPanel.Height := 420;
   ParamPanel.Parent := ToolPanel;
   CurrentTool.ParamsCreate(ParamPanel);
-     for i := 0 to High(Figures) do
+
+  for i := 0 to High(Figures) do
      if not ((Sender as TSpeedbutton).tag = 8) then Figures[i].Selected := False;
   Invalidate;
 end;
