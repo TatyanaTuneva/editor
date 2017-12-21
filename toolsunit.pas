@@ -98,6 +98,7 @@ TPaw = class(TFigureTool)
   FirstPoint: TPoint;
   procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
+  procedure MouseUp(X: Integer; Y:Integer; ACanvas: TCanvas); override;
   procedure ParamListCreate(); override;
 end;
 
@@ -115,6 +116,8 @@ TRoundedRectangleTool = class(TBigFigureTool)
 end;
 
 TSelectTool = class(TFigureTool)
+  ChangeSizeIndex: Integer;   //1 - не линия верхняя точка 2- не линия нижняя точка
+  APoint: TPoint;             //3 - линия верхняя точка 4 - линия  нижняя точка
   procedure MouseDown(X: integer;Y: integer); override;
   procedure MouseMove(X: integer;Y: integer); override;
   procedure MouseUp(X: integer;Y: integer; ACanvas: TCanvas); override;
@@ -139,6 +142,8 @@ var
   ABrushStyle: TBrushStyle;
   SelectedBStyleIndex, SelectedPStyleIndex: integer;
   SelectedCreateParamFlag: Boolean;
+  SelectedChangeSize: Boolean;
+  SelectedFigureForChangingSize, SelectedPoint: integer;
   SelectedFigure: TFigureTool;
   Invalidate_: procedure of Object;
 
@@ -467,6 +472,11 @@ begin
   FirstPoint:=Point(X,Y);
 end;
 
+procedure TPaw.Mouseup(X: Integer; Y:Integer; ACanvas: TCanvas);
+begin
+
+end;
+
 procedure TPolyLineTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TLittleFigure;
@@ -594,7 +604,118 @@ end;
 procedure TSelectTool.MouseDown(X: Integer; Y: Integer);
 var
   AFigure: TRectangleMagnifier;
+  width, i, j: Integer;
 begin
+  for i:=0 to high(Figures) do begin
+    width := (Figures[i] as TLittleFigure).Width;
+
+      if (x >= WorldToScreen(Figures[i].Points[0]).x - 15 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[0]).y - 15 - Width div 2) and
+         (x <= WorldToScreen(Figures[i].Points[0]).x - 5 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[0]).y - 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 1;
+       end;
+
+      if (x <= WorldToScreen(Figures[i].Points[1]).x + 15 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[1]).y + 15 - Width div 2) and
+         (x >= WorldToScreen(Figures[i].Points[1]).x + 5 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[1]).y + 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 2;
+       end;
+
+      if (x <= WorldToScreen(Figures[i].Points[0]).x + 15 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[1]).y - 15 - Width div 2) and
+         (x >= WorldToScreen(Figures[i].Points[0]).x + 5 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[1]).y - 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 3;
+       end;
+
+      if (x >= WorldToScreen(Figures[i].Points[1]).x - 15 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[0]).y + 15 - Width div 2) and
+         (x <= WorldToScreen(Figures[i].Points[1]).x - 5 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[0]).y + 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 4;
+       end;
+
+       if (x >= WorldToScreen(Figures[i].Points[0]).x + 15 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[0]).y + 15 - Width div 2) and
+         (x <= WorldToScreen(Figures[i].Points[0]).x + 5 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[0]).y + 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 1;
+       end;
+
+      if (x <= WorldToScreen(Figures[i].Points[1]).x - 15 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[1]).y - 15 - Width div 2) and
+         (x >= WorldToScreen(Figures[i].Points[1]).x - 5 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[1]).y - 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 2;
+       end;
+
+      if (x <= WorldToScreen(Figures[i].Points[2]).x - 15 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[1]).y + 15 - Width div 2) and
+         (x >= WorldToScreen(Figures[i].Points[2]).x - 5 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[1]).y + 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 3;
+       end;
+
+      if (x >= WorldToScreen(Figures[i].Points[1]).x + 15 - Width div 2) and
+         (y <= WorldToScreen(Figures[i].Points[2]).y - 15 - Width div 2) and
+         (x <= WorldToScreen(Figures[i].Points[1]).x + 5 - Width div 2) and
+         (y >= WorldToScreen(Figures[i].Points[2]).y - 5 - width div 2) and
+         (length(Figures[i].Points) = 2) then begin
+           SelectedFigureForChangingSize := i;
+           Figures[i].SelectedChangeSize := True;
+           SelectedChangeSize := True;
+           ChangeSizeIndex := 4;
+       end;
+
+
+      if (length(Figures[i].Points) > 2) then begin
+        for j:=0 to high(figures[i].Points) do begin
+          if (x >= WorldToScreen((Figures[i] as TPolyLine).Points[j]).x - 5 - Width div 2) and
+             (y >= WorldToScreen((Figures[i] as TPolyLine).Points[j]).y - 5 - Width div 2) and
+             (x <= WorldToScreen((Figures[i] as TPolyLine).Points[j]).x + 5 - Width div 2) and
+             (y <= WorldToScreen((Figures[i] as TPolyLine).Points[j]).y + 5 - width div 2)
+         then begin
+               SelectedFigureForChangingSize := i;
+               Figures[i].SelectedChangeSize := True;
+               SelectedChangeSize := True;
+               SelectedPoint := J;
+               ChangeSizeIndex := 5;
+          End;
+       end;
+    end;
+  end;
+
+  if not SelectedChangeSize then begin
   SetLength(Figures, Length(figures) + 1);
   Figures[high(Figures)] := TRectangleMagnifier.Create();
   AFigure := (Figures[high(Figures)] as TRectangleMagnifier);
@@ -602,11 +723,39 @@ begin
   AFigure.Points[0] := ScreenToWorld(Point(X,Y));
   AFigure.Points[1] := ScreenToWorld(Point(X,Y));
   SelectedCreateParamFlag := True;
+  end;
 end;
 
 procedure TSelectTool.MouseMove(X: Integer; Y: Integer);
+var
+  i, j: Integer;
 begin
-  (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));                                                                    /////////
+  if SelectedChangeSize then
+begin
+    case ChangeSizeIndex of
+  1: begin
+       Figures[SelectedFigureForChangingSize].Points[0].X := ScreenToWorld(Point(X,Y)).X;
+       Figures[SelectedFigureForChangingSize].Points[0].Y := ScreenToWorld(Point(X,Y)).Y;
+     end;
+  2: begin
+       Figures[SelectedFigureForChangingSize].Points[1].X := ScreenToWorld(Point(X,Y)).X;
+       Figures[SelectedFigureForChangingSize].Points[1].Y := ScreenToWorld(Point(X,Y)).Y;
+     end;
+  3: begin
+       Figures[SelectedFigureForChangingSize].Points[1].X := ScreenToWorld(Point(X,Y)).X;
+       Figures[SelectedFigureForChangingSize].Points[2].Y := ScreenToWorld(Point(X,Y)).Y;
+     end;
+  4: begin
+       Figures[SelectedFigureForChangingSize].Points[2].X := ScreenToWorld(Point(X,Y)).X;
+       Figures[SelectedFigureForChangingSize].Points[1].Y := ScreenToWorld(Point(X,Y)).Y;
+     end;
+  5: begin
+       Figures[SelectedFigureForChangingSize].Points[SelectedPoint].X := ScreenToWorld(Point(X,Y)).X;
+       Figures[SelectedFigureForChangingSize].Points[SelectedPoint].Y := ScreenToWorld(Point(X,Y)).Y;
+     end;
+end;
+    end;
+ if not SelectedChangeSize then (Figures[high(Figures)] as TLittleFigure).Points[1] := ScreenToWorld(Point(X,Y));
 end;
 
 procedure TSelectTool.MouseUp(X: Integer; Y: Integer; ACanvas: TCanvas);
@@ -615,7 +764,8 @@ var
    i:integer;
   ToolRegio: HRGN;
 begin
-   SelectRegion := CreateRectRgn((WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).x),
+  if not SelectedChangeSize then begin
+  SelectRegion := CreateRectRgn((WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).x),
                                  (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[0]).y),
                                  (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).x),
                                  (WorldToScreen((Figures[high(Figures)] as TRectangleMagnifier).Points[1]).y));
@@ -638,6 +788,12 @@ begin
      end;
   SetLength(Figures, Length(figures) - 1);
   SelectParamListCreate();
+  end;
+  SelectedChangeSize := false;
+  ChangeSizeIndex := 0;
+  SelectedFigureForChangingSize := -1;
+  SelectedPoint := -1;
+  for i:= 0 to high(figures) do figures[i].SelectedChangeSize := False;
 end;
 
 procedure TSelectTool.SelectParamListCreate();
@@ -698,7 +854,6 @@ end;
 procedure TMoverTool.MouseUp(X: integer; Y: integer; ACanvas: TCanvas);
 begin
 end;
-
 
 begin
   RegisterTool(TPolyLineTool.Create(),'0.png');

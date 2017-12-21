@@ -14,6 +14,10 @@ type
 
   TEditor = class(TForm)
     Correction: TMenuItem;
+    OpenImage: TMenuItem;
+    SaveImage: TMenuItem;
+    ODialog: TOpenDialog;
+    SDialog: TSaveDialog;
     ShowAll: TMenuItem;
     ClearAll: TMenuItem;
     SelectedDown: TMenuItem;
@@ -46,6 +50,8 @@ type
     procedure MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure OpenImageClick(Sender: TObject);
+    procedure SaveImageClick(Sender: TObject);
     procedure ScrollBarScroll(Sender: TObject;
       ScrollCode: TScrollCode; var ScrollPos: Integer);
     procedure SelectAllClick(Sender: TObject);
@@ -55,16 +61,23 @@ type
     procedure ZoomChange(Sender: TObject);
 
 
+
+
   private
     { private declarations }
   public
     { public declarations }
   end;
+     procedure SaveImageAll(Path: string);
+    procedure DownloadImage(Path: string);
+const
+  Key = '@TEditor' ;
 
 var
   Editor: TEditor;
   isDrawing: boolean;
   CurrentTool: TFigureTool;
+  OpenPicture: string;
 
 implementation
 
@@ -89,7 +102,7 @@ begin
   if SelectedCreateParamFlag then begin
   ParamPanel := TPanel.Create(Editor);
   ParamPanel.Top := 150;
-  Parampanel.LeFt := 5;
+  Parampanel.Left := 5;
   ParamPanel.Width := 155;
   ParamPanel.Height := 420;
   ParamPanel.Parent := ToolPanel;
@@ -127,6 +140,7 @@ begin
   ToolButton.Glyph := ToolIcon;
   end;
   Invalidate_:=@Invalidate;
+  OpenPicture:='';
 end;
 
 procedure TEditor.ButtonsDown(Sender: TObject);
@@ -144,8 +158,7 @@ begin
   ParamPanel.Parent := ToolPanel;
   CurrentTool.ParamsCreate(ParamPanel);
 
-  for i := 0 to High(Figures) do
-     if not ((Sender as TSpeedbutton).tag = 8) then Figures[i].Selected := False;
+  if not ((Sender as TSpeedbutton).tag = 8)  then for i := 0 to High(Figures) do Figures[i].Selected := False;
   Invalidate;
 end;
 
@@ -226,6 +239,7 @@ begin
   end;
 end;
 
+
 procedure TEditor.ScrollBarScroll(Sender: TObject;
   ScrollCode: TScrollCode; var ScrollPos: Integer);
 begin
@@ -301,6 +315,103 @@ procedure TEditor.ZoomChange(Sender: TObject);
 begin
   Zoom := ZoomSpinEdit.Value;
   Invalidate;
+end;
+
+procedure TEditor.SaveImageClick(Sender: TObject);
+begin
+  if SDialog.Execute then begin
+    OpenPicture := SDialog.FileName;
+  end;
+  SaveImageAll(OpenPicture);
+end;
+
+procedure SaveImageAll(Path: string);
+var
+  image: text;
+  a: array of string;
+  i, j: integer;
+begin
+  assign(image, Path);
+  rewrite(image);
+  writeln(image, Key);
+  writeln(image, high(Figures));
+  for i:=0 to High(Figures) do begin
+    writeln(image, Figures[i].ClassName);
+    writeln(image, '{');
+    a := Figures[i].Save(Figures[i]);
+    for j:=0 to high(a) do writeln(image, a[j]);
+    writeln(image, '}');
+  end;
+  close(image);
+end;
+
+procedure TEditor.OpenImageClick(Sender: TObject);
+begin
+  if ODialog.Execute then begin
+    DownloadImage(ODialog.Filename);
+  end;
+  Invalidate;
+end;
+
+procedure DownloadImage(Path: string);
+var
+  image: text;
+  i, j: integer;
+  s, l: String;
+  a: StringArray;
+begin
+  assign(image, Path);
+  reset(image);
+  readln(image, s);
+  if s = Key then begin
+    Editor.FormCreate(nil);
+    OpenPicture := Path;
+    readln(image, l);
+    SetLength(Figures, StrToInt(l) + 1);
+    for i := 0 to StrToInt(l) do  begin
+      readln(image, s);
+      readln(image);
+      if not (s = 'TPolyLine') then  begin
+        setlength(a, 4);
+        for j:=0 to 3 do readln(image, a[j]);
+
+        if (s = 'TLine') then begin
+          SetLength(a, 7);
+          for j:=4 to 6 do readln(image, a[j]);
+          TLine.Download(i, a) ;
+          end;
+
+        if (s = 'TRectangle') then begin
+          SetLength(a, 9);
+          for j:=4 to 8 do readln(image, a[j]);
+          TRectangle.Download(i,a);
+          end;
+
+        if (s = 'TEllipce') then begin
+          SetLength(a, 9);
+          for j:=4 to 8 do readln(image, a[j]);
+          TEllipce.Download(i, a);
+          end;
+
+        if (s = 'TRoundedRectangle') then begin
+          SetLength(a, 11);
+          for j:=4 to 10 do readln(image, a[j]);
+          TRoundedRectangle.Download(i, a);
+        end;
+
+    end
+    else begin
+      readln(image);
+      read(image, s);
+      SetLength(a, StrToInt(s) + 2);
+      a[0] := S;
+      for j := 1 to high(a) do readln(image, a[j]);
+      TPolyline.Download(i, a);
+      readln(image);
+    end;
+    ReadLn(image);
+    end;
+  end;
 end;
 
 begin

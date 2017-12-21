@@ -1,7 +1,7 @@
 object Editor: TEditor
-  Left = 473
+  Left = 845
   Height = 728
-  Top = 263
+  Top = 282
   Width = 1362
   HorzScrollBar.Page = 287
   HorzScrollBar.Range = 287
@@ -72,7 +72,7 @@ object Editor: TEditor
     Left = 160
     Height = 21
     Top = 680
-    Width = 1180
+    Width = 1176
     Anchors = [akLeft, akRight, akBottom]
     Max = 881
     PageSize = 881
@@ -80,8 +80,8 @@ object Editor: TEditor
     OnScroll = ScrollBarScroll
   end
   object ScrollBarVertical: TScrollBar
-    Left = 1339
-    Height = 681
+    Left = 1341
+    Height = 680
     Top = 0
     Width = 21
     Anchors = [akTop, akRight, akBottom]
@@ -92,10 +92,18 @@ object Editor: TEditor
     OnScroll = ScrollBarScroll
   end
   object MMenu: TMainMenu
-    left = 152
-    top = 88
+    left = 216
+    top = 8
     object File_: TMenuItem
       Caption = 'Файл'
+      object SaveImage: TMenuItem
+        Caption = 'Cохранить'
+        OnClick = SaveImageClick
+      end
+      object OpenImage: TMenuItem
+        Caption = 'Загрузить'
+        OnClick = OpenImageClick
+      end
       object Exit_: TMenuItem
         Caption = 'Выход'
         OnClick = Exit_Click
@@ -135,5 +143,13 @@ object Editor: TEditor
         OnClick = AuthorClick
       end
     end
+  end
+  object ODialog: TOpenDialog
+    left = 224
+    top = 96
+  end
+  object SDialog: TSaveDialog
+    left = 440
+    top = 64
   end
 end

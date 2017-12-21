@@ -15,13 +15,15 @@ PolygonPointsArray = array of TPoint;
 StringArray = array of string;                                   // 1 - line polyline
                                                                  // 2 - rectangle ellipce
 TFigure = class                                                  // 3 - rrectangle
-  Selected: boolean;
+  Selected, SelectedChangeSize: boolean;
   Index: integer;
   Region: HRGN;
   Points: array of TFloatPoint;
   procedure Draw(ACanvas:TCanvas); virtual;abstract;
   procedure SetRegion; Virtual; abstract;
   procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);   virtual;
+  function Save(AFigure: TFigure): StringArray; virtual;abstract;
+ class procedure Download(n: integer; a: StringArray); virtual;abstract;
 end;
 
 TLittleFigure = class(TFigure)
@@ -30,6 +32,8 @@ TLittleFigure = class(TFigure)
   Width: integer;
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray); override;
 end;
 
 TBigFigure = class(TLittleFigure)
@@ -39,26 +43,37 @@ TBigFigure = class(TLittleFigure)
   RoundingRadiusY: Integer;
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray);
 end;
 
 TPolyLine = class(TLittleFigure)
+  max, min: TFloatPoint;
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray);
 end;
 
 TLine = class(TLittleFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray);
 end;
 
 TEllipce = class(TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray);
 end;
 
 TRectangle = class(TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray);
 end;
 
 TRectangleMagnifier = class(TLittleFigure)
@@ -70,6 +85,8 @@ end;
 TRoundedRectangle = class (TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
+  function Save(AFigure: TFigure): StringArray; override;
+ class  procedure Download(n: integer; a: StringArray);
 end;
 
 procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width:integer);
@@ -78,13 +95,17 @@ var
   Figures: array of TFigure;
   layer: array of Tfigure;
 
+const PStyles: array[0..5] of TPenStyle = (psSolid, psClear, psDot,
+psDash, psDashDot, psDashDotDot);
+const BStyles: array [0..7] of TBrushStyle = (bsSolid, bsClear,
+bsHorizontal, bsVertical, bsFDiagonal, bsBDiagonal, bsCross, bsDiagCross);
+
 Implementation
 
 procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);
 var
   Point1, Point2, a:TFloatPoint;
   i: integer;
-  max,min: TFloatPoint;
 begin
 If length(AFigure.Points) = 2 then begin
    Point1.X := AFigure.Points[0].X;
@@ -107,26 +128,43 @@ If length(AFigure.Points) = 2 then begin
   Canvas.Pen.Color := clBlack;
   Canvas.Pen.Width := 1;
   Canvas.Pen.Style := psDash;
+  Canvas.Brush.Color := clBlack;
   Canvas.Frame(WorldToScreen(Point1).x - 5 - Width div 2,WorldToScreen(Point1).y - 5 - Width div 2,
                WorldToScreen(Point2).x + 5 + Width div 2,WorldToScreen(Point2).y + 5 + Width div 2);
 
+  Canvas.Rectangle(WorldToScreen(Point1).x - 15 - Width div 2,
+                   WorldToScreen(Point1).y - 15 - Width div 2,
+                   WorldToScreen(Point1).x - 5 - Width div 2,
+                   WorldToScreen(Point1).y - 5 - width div 2);
+
+  Canvas.Rectangle(WorldToScreen(Point2).x + 15 - Width div 2,
+                   WorldToScreen(Point2).y + 15 - Width div 2,
+                   WorldToScreen(Point2).x + 5 - Width div 2,
+                   WorldToScreen(Point2).y + 5 - width div 2);
+
+  Canvas.Rectangle(WorldToScreen(Point2).x + 15 - Width div 2,
+                   WorldToScreen(Point1).y - 15 - Width div 2,
+                   WorldToScreen(Point2).x + 5 - Width div 2,
+                   WorldToScreen(Point1).y - 5 - width div 2);
+
+  Canvas.Rectangle(WorldToScreen(Point1).x - 15 - Width div 2,
+                   WorldToScreen(Point2).y + 15 - Width div 2,
+                   WorldToScreen(Point1).x - 5 - Width div 2,
+                   WorldToScreen(Point2).y + 5 - width div 2);
+
+
+
  end else begin
-    max := AFigure.Points[0];
-    min := AFigure.Points[0];
-   for i:=0 to length(AFigure.Points) - 1 do begin
-    if AFigure.Points[i].X > max.x then max.x := AFigure.Points[i].X;
-    if AFigure.Points[i].Y > max.y then max.y := AFigure.Points[i].y;
-
-    if AFigure.Points[i].X < min.x then min.x := AFigure.Points[i].X;
-    if AFigure.Points[i].Y < min.y then min.y := AFigure.Points[i].Y;
+   for i:=0 to high(AFigure.points) do begin
+     Canvas.Pen.Color := clBlack;
+     Canvas.Pen.Width := 1;
+     Canvas.Pen.Style := psDash;
+     Canvas.Brush.Color := clBlack;
+     Canvas.Rectangle(WorldToScreen((AFigure as TPolyLine).points[i]).x - 5 - Width div 2,
+                     WorldToScreen((AFigure as TPolyLine).points[i]).y - 5 - Width div 2,
+                     WorldToScreen((AFigure as TPolyLine).points[i]).x + 5 - Width div 2,
+                     WorldToScreen((AFigure as TPolyLine).points[i]).y + 5 - width div 2);
    end;
-
-
-    Canvas.Pen.Color := clBlack;
-    Canvas.Pen.Width := 1;
-    Canvas.Pen.Style := psDash;
-    Canvas.Frame(WorldToScreen(min).x - 5 - Width div 2,WorldToScreen(min).y - 5 - Width div 2,
-                 WorldToScreen(max).x + 5 + Width div 2,WorldToScreen(max).y + 5 + Width div 2);
  end;
 end;
 
@@ -281,6 +319,132 @@ begin
 end;
 
 
-begin
+/////////////////////////SAVE///////////////////////////////////
 
+function TLittleFigure.Save(AFigure: TFigure): StringArray;
+begin
+  SetLength(Save, 7);
+  Save[0] := FloatToStr((AFigure as TLittleFigure).Points[0].X);
+  Save[1] := FloatToStr((AFigure as TLittleFigure).Points[0].Y);
+  Save[2] := FloatToStr((AFigure as TLittleFigure).Points[1].X);
+  Save[3] := FloatToStr((AFigure as TLittleFigure).Points[1].Y);
+  Save[4] := IntToStr((AFigure as TLittleFigure).Width);
+  Save[5] := IntToStr(ord((AFigure as TLittleFigure).PenStyle));
+  Save[6] := ColorToString((AFigure as TLittleFigure).PenColor);
+end;
+
+function TBigFigure.Save(AFigure: TFigure): StringArray;
+begin
+  Save:=Inherited Save(AFigure);
+  SetLength(Save, Length(Save) + 2);
+  Save[High(Save) - 1] := IntToStr(ord((AFigure as TBigFigure).BrushStyle));
+  Save[High(Save)] :=  ColorToString((AFigure as TBigFigure).BrushColor);
+end;
+
+function TRectangle.Save(AFigure: TFigure): StringArray;
+begin
+  Save:=Inherited Save(AFigure);
+end;
+
+function TEllipce.Save(AFigure: TFigure): StringArray;
+begin
+  Save:=Inherited Save(AFigure);
+end;
+
+function TLine.Save(AFigure: TFigure): StringArray;
+begin
+  Save:=Inherited Save(AFigure);
+end;
+
+function TPolyline.Save(AFigure: TFigure): StringArray;
+var
+  i, j: integer;
+begin
+  SetLength(Save, 2 * Length(AFigure.Points) + 3);
+  Save[0]:=IntToStr(Length(AFigure.Points));
+  Save[1]:=IntToStr((AFigure as TLittleFigure).Width);
+  Save[3] := IntToStr(ord((AFigure as TLittleFigure).PenStyle));
+  Save[4]:= ColorToString((AFigure as TLittleFigure).PenColor);
+  i := 4;
+  for j:=0 to high(AFigure.Points)do begin
+    Save[i]:=FloatToStr(AFigure.Points[j].x);
+    Save[i + 1]:=FloatToStr(AFigure.Points[j].y);
+    i := i + 2;
+  end;
+end;
+
+function TRoundedRectangle.Save(AFigure: TFigure): StringArray;
+begin
+  Save:=Inherited Save(AFigure);
+  SetLength(Save, Length(Save) + 2);
+  Save[high(Save) - 1]:=IntToStr((AFigure as TRoundedRectangle).RoundingRadiusX);
+  Save[high(Save)]:=IntToStr(((AFigure as TRoundedRectangle).RoundingRadiusY));
+end;
+
+////////////DOWNLOAD////////////////////////////////////////////
+
+class procedure TLittleFigure.Download(n: integer; a: StringArray);
+begin
+  SetLength(Figures[n].Points, 2);
+  Figures[n].Points[0].X := StrToFloat(a[0]);
+  Figures[n].Points[0].Y := StrToFloat(a[1]);
+  Figures[n].Points[1].X := StrToFloat(a[2]);
+  Figures[n].Points[1].Y := StrToFloat(a[3]);
+ (Figures[n] as TLittleFigure).Width := StrToInt(a[4]);
+ (Figures[n] as TLittleFigure).PenStyle := PStyles[StrToInt(a[5])];
+ (Figures[n] as TLittleFigure).PenColor := StringToColor(a[6]);
+end;
+
+class procedure TBigFigure.Download(n: integer; a: StringArray);
+begin
+  Inherited Download(n,a);
+  (Figures[n] as TBigFigure).BrushStyle := BStyles[StrToInt(a[7])];
+  (Figures[n] as TBigFigure).BrushColor := StringToColor(a[8]);
+end;
+
+class procedure TRectangle.Download(n: integer; a: StringArray);
+begin
+  Figures[n] := TRectangle.Create();
+  Inherited Download(n,a);
+end;
+
+class procedure TEllipce.Download(n: integer; a: StringArray);
+begin
+  Figures[n] := TEllipce.Create();
+  Inherited Download(n,a);
+end;
+
+class procedure TRoundedRectangle.Download(n: integer; a: StringArray);
+begin
+  Figures[n] := TRoundedRectangle.Create;
+  Inherited Download(n,a);
+  (Figures[n] as TRoundedRectangle).RoundingRadiusX := StrToInt(a[9]);
+  (Figures[n] as TRoundedRectangle).RoundingRadiusY := StrToInt(a[10]);
+end;
+
+class procedure TLine.Download(n: integer; a: StringArray);
+begin
+  Figures[n] := TLine.Create;
+  Inherited Download(n,a);
+end;
+
+class procedure TPolyLine.Download(n: integer; a: StringArray);
+var
+   i, j: integer;
+begin
+  Figures[n] := TPolyLine.Create();
+  SetLength(Figures[n].Points, StrToInt(a[0]));
+  (Figures[n] as TPolyLine).Width := StrToInt(a[1]);
+  (Figures[n] as TLittleFigure).PenStyle := PStyles[StrToInt(a[2])];
+  (Figures[n] as TPolyLine).PenColor := StringToColor(a[3]);
+  i := 4;
+  for j:=0 to (strtoint(a[0])) * 2 - 1 do begin
+    Figures[n].Points.[j].x:=StrToFloat(a[i]);
+    Figures[n].Points.[j].y:=StrToFloat(a[i + 1]);
+    i:= i + 2;
+  end;
+end;
+
+
+begin
 end.

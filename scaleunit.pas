@@ -13,12 +13,16 @@ uses
  procedure RectZoom(AHeight,AWidth:Extended;MinPoint,MaxPoint: TFloatPoint);
  function Scrn2Wrld(P: TPoint): TFloatPoint;
 
-var
+// type
+//  SaveArray = array of string;
+
+ var
  zoom: double;
  Offset : TPoint;
  MinPoint, MaxPoint: TFloatPoint;
  AHeight, AWidth: Extended;
  AHeightPB, AWidthPB: Extended;
+
 
 Implementation
 
