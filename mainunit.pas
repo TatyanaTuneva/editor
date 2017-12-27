@@ -14,6 +14,8 @@ type
 
   TEditor = class(TForm)
     Correction: TMenuItem;
+    CopySelected: TMenuItem;
+    PasteSelected: TMenuItem;
     OpenImage: TMenuItem;
     SaveImage: TMenuItem;
     ODialog: TOpenDialog;
@@ -40,6 +42,7 @@ type
     procedure ButtonsDown(Sender: TObject);
     procedure ClearAllClick(Sender: TObject);
     procedure ClearClick(Sender: TObject);
+    procedure CopySelectedClick(Sender: TObject);
     procedure DeleteSelectedClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MouseUp(Sender: TObject; Button: TMouseButton;
@@ -51,6 +54,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure OpenImageClick(Sender: TObject);
+    procedure PasteSelectedClick(Sender: TObject);
     procedure SaveImageClick(Sender: TObject);
     procedure ScrollBarScroll(Sender: TObject;
       ScrollCode: TScrollCode; var ScrollPos: Integer);
@@ -68,14 +72,15 @@ type
   public
     { public declarations }
   end;
-     procedure SaveImageAll(Path: string);
+    procedure SaveImageAll(Path: string);
     procedure DownloadImage(Path: string);
+
 const
   Key = '@TEditor' ;
 
 var
   Editor: TEditor;
-  isDrawing: boolean;
+  isDrawing, BufferFlag: boolean;
   CurrentTool: TFigureTool;
   OpenPicture: string;
 
@@ -118,6 +123,8 @@ var
   ToolButton: TSpeedButton;
   ToolIcon: TBitMap;
 begin
+  Now := 0;
+  SetLength(ArrayOfActions, Length(ArrayOfActions) + 1);
   CurrentTool := TPolyLineTool.Create();
   Zoom := 100;
 
@@ -171,6 +178,52 @@ end;
 procedure TEditor.ClearClick(Sender: TObject);
 begin
 
+end;
+
+procedure TEditor.CopySelectedClick(Sender: TObject);
+var
+  i, q: Integer;
+  a: StringArray;
+begin
+  SetLength(Buffer, 0);
+  for i := 0 to High(Figures) do begin
+  BufferFlag := True;
+  if Figures[i].Selected then begin
+
+    SetLength(Buffer, Length(Buffer) + 1);
+    case Figures[i].ClassName of
+
+      'TPolyLine':         Buffer[High(Buffer)] := TPolyLine.Create;
+      'TLine'    :         Buffer[High(Buffer)] := TLine.Create;
+      'TEllipce' :         begin
+                             Buffer[High(Buffer)] := TEllipce.Create;
+                             (Buffer[High(Buffer)] as TBigFigure).BrushColor := (Figures[i] as TBigFigure).BrushColor;
+                             (Buffer[High(Buffer)] as TBigFigure).BrushStyle := (Figures[i] as TBigFigure).BrushStyle;
+                           end;
+      'TRectangle':        begin
+                             Buffer[High(Buffer)] := TRectangle.Create;
+                             (Buffer[High(Buffer)] as TBigFigure).BrushColor := (Figures[i] as TBigFigure).BrushColor;
+                             (Buffer[High(Buffer)] as TBigFigure).BrushStyle := (Figures[i] as TBigFigure).BrushStyle;
+                           end;
+      'TRoundedRectangle': begin
+                             Buffer[High(Buffer)] := TRoundedRectangle.Create;
+                             (Buffer[High(Buffer)] as TBigFigure).BrushColor := (Figures[i] as TBigFigure).BrushColor;
+                             (Buffer[High(Buffer)] as TBigFigure).BrushStyle := (Figures[i] as TBigFigure).BrushStyle;
+                             (Buffer[High(Buffer)] as TRoundedRectangle).RoundingRadiusX := (Figures[i] as TRoundedRectangle).RoundingRadiusX;
+                             (Buffer[High(Buffer)] as TRoundedRectangle).RoundingRadiusY := (Figures[i] as TRoundedRectangle).RoundingRadiusY;
+                           end;
+    end;
+
+    for q := 0 to Length(Figures[i].Points) do begin
+      SetLength(Buffer[High(Buffer)].Points, Length(Buffer[High(Buffer)].Points) + 1);
+      Buffer[High(Buffer)].Points[q] := Figures[i].Points[q];
+    end;
+
+    (Buffer[High(Buffer)] as TLittleFigure).PenColor := (Figures[i] as TLittleFigure).PenColor;
+    (Buffer[High(Buffer)] as TLittleFigure).PenStyle := (Figures[i] as TLittleFigure).PenStyle;
+    (Buffer[High(Buffer)] as TLittleFigure).Width := (Figures[i] as TLittleFigure).Width;
+  end;
+end;
 end;
 
 procedure TEditor.BackClick(Sender: TObject);
@@ -353,6 +406,50 @@ begin
   Invalidate;
 end;
 
+procedure TEditor.PasteSelectedClick(Sender: TObject);
+var
+  i, q: Integer;
+  a: StringArray;
+begin
+if (Length(Buffer) <> 0) and BufferFlag then begin
+    SetLength(Figures, Length(Figures) + Length(Buffer));
+    for i := 0 to high(Buffer) do begin
+    case Buffer[i].ClassName of
+
+      'TPolyLine':         Figures[Length(Figures) + i] := TPolyLine.Create;
+      'TLine'    :         Figures[Length(Figures) + i] := TLine.Create;
+      'TEllipce' :         begin
+                             Figures[Length(Figures) + i] := TEllipce.Create;
+                             (Figures[Length(Figures) + i] as TBigFigure).BrushColor := (Buffer[i] as TBigFigure).BrushColor;
+                             (Figures[Length(Figures) + i] as TBigFigure).BrushStyle := (Buffer[i] as TBigFigure).BrushStyle;
+                           end;
+      'TRectangle':        begin
+                             Figures[Length(Figures) + i] := TRectangle.Create;
+                             (Figures[Length(Figures) + i] as TBigFigure).BrushColor := (Buffer[i] as TBigFigure).BrushColor;
+                             (Figures[Length(Figures) + i] as TBigFigure).BrushStyle := (Buffer[i] as TBigFigure).BrushStyle;
+                           end;
+      'TRoundedRectangle': begin
+                             Figures[Length(Figures) + i] := TRoundedRectangle.Create;
+                             (Figures[Length(Figures) + i] as TBigFigure).BrushColor := (Buffer[i] as TBigFigure).BrushColor;
+                             (Figures[Length(Figures) + i] as TBigFigure).BrushStyle := (Buffer[i] as TBigFigure).BrushStyle;
+                             (Figures[Length(Figures) + i] as TRoundedRectangle).RoundingRadiusX := (Buffer[i] as TRoundedRectangle).RoundingRadiusX;
+                             (Figures[Length(Figures) + i] as TRoundedRectangle).RoundingRadiusY := (Buffer[i] as TRoundedRectangle).RoundingRadiusY;
+                           end;
+    end;
+
+    for q := 0 to Length(Buffer[i].Points) do begin
+      SetLength(Figures[Length(Figures) + i].Points, Length(Figures[Length(Figures) + i].Points) + 1);
+      Figures[Length(Figures) + i].Points[q] := Buffer[i].Points[q];
+    end;
+
+    (Figures[Length(Figures) + i] as TLittleFigure).PenColor := (Buffer[i] as TLittleFigure).PenColor;
+    (Figures[Length(Figures) + i] as TLittleFigure).PenStyle := (Buffer[i] as TLittleFigure).PenStyle;
+    (Figures[Length(Figures) + i] as TLittleFigure).Width := (Buffer[i] as TLittleFigure).Width;
+  end;
+  end;
+  Invalidate;
+end;
+
 procedure DownloadImage(Path: string);
 var
   image: text;
@@ -401,13 +498,11 @@ begin
 
     end
     else begin
-      readln(image);
       read(image, s);
-      SetLength(a, StrToInt(s) + 2);
+      SetLength(a, StrToInt(s) * 2 + 4);
       a[0] := S;
       for j := 1 to high(a) do readln(image, a[j]);
       TPolyline.Download(i, a);
-      readln(image);
     end;
     ReadLn(image);
     end;
@@ -415,4 +510,5 @@ begin
 end;
 
 begin
+  Now := 0;
 end.

@@ -9,21 +9,18 @@ uses
 
 type
 
-TFigureClass    = class  of TFigure;
-tempPointsArray = array[0..3] of TPoint;
-PolygonPointsArray = array of TPoint;
-StringArray = array of string;                                   // 1 - line polyline
+StringArray = array of string;
                                                                  // 2 - rectangle ellipce
 TFigure = class                                                  // 3 - rrectangle
-  Selected, SelectedChangeSize: boolean;
+  Selected, SelectedChangeSize: boolean;                         // 1 - line polyline
   Index: integer;
   Region: HRGN;
   Points: array of TFloatPoint;
-  procedure Draw(ACanvas:TCanvas); virtual;abstract;
+  procedure Draw(ACanvas:TCanvas); virtual; abstract;
   procedure SetRegion; Virtual; abstract;
   procedure DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);   virtual;
-  function Save(AFigure: TFigure): StringArray; virtual;abstract;
- class procedure Download(n: integer; a: StringArray); virtual;abstract;
+  function Save(AFigure: TFigure): StringArray; virtual; abstract;
+  class procedure Download(n: integer; a: StringArray); virtual; abstract;
 end;
 
 TLittleFigure = class(TFigure)
@@ -33,7 +30,7 @@ TLittleFigure = class(TFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray); override;
+  class  procedure Download(n: integer; a: StringArray); override;
 end;
 
 TBigFigure = class(TLittleFigure)
@@ -44,7 +41,7 @@ TBigFigure = class(TLittleFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray);
+  class  procedure Download(n: integer; a: StringArray);
 end;
 
 TPolyLine = class(TLittleFigure)
@@ -52,28 +49,28 @@ TPolyLine = class(TLittleFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray);
+  class  procedure Download(n: integer; a: StringArray);
 end;
 
 TLine = class(TLittleFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray);
+  class  procedure Download(n: integer; a: StringArray);
 end;
 
 TEllipce = class(TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray);
+  class  procedure Download(n: integer; a: StringArray);
 end;
 
 TRectangle = class(TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray);
+  class  procedure Download(n: integer; a: StringArray);
 end;
 
 TRectangleMagnifier = class(TLittleFigure)
@@ -86,17 +83,24 @@ TRoundedRectangle = class (TBigFigure)
   procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
- class  procedure Download(n: integer; a: StringArray);
+  class  procedure Download(n: integer; a: StringArray);
 end;
+
+
+  TFigureClass    = class  of TFigure;
+  Figures1 =  array of TFigure;
 
 procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width:integer);
 
 var
-  Figures: array of TFigure;
-  layer: array of Tfigure;
+  Figures: Figures1;
+  Buffer: array of TFigure;
+  ArrayOfActions: array of Figures1;
+  Now: integer;
 
 const PStyles: array[0..5] of TPenStyle = (psSolid, psClear, psDot,
 psDash, psDashDot, psDashDotDot);
+
 const BStyles: array [0..7] of TBrushStyle = (bsSolid, bsClear,
 bsHorizontal, bsVertical, bsFDiagonal, bsBDiagonal, bsCross, bsDiagCross);
 
@@ -218,7 +222,8 @@ end;
 procedure TRoundedRectangle.Draw(ACanvas:TCanvas);
 begin
   Inherited;
-  ACanvas.RoundRect(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y, RoundingRadiusX,RoundingRadiusY);
+  ACanvas.RoundRect(WorldToScreen(Points[0]).x,WorldToScreen(Points[0]).Y,WorldToScreen(Points[1]).x,WorldToScreen(Points[1]).Y,
+                   RoundingRadiusX, RoundingRadiusY);
 end;
 
 procedure SetOffset (APoint: TFloatPoint);
@@ -360,11 +365,11 @@ function TPolyline.Save(AFigure: TFigure): StringArray;
 var
   i, j: integer;
 begin
-  SetLength(Save, 2 * Length(AFigure.Points) + 3);
+  SetLength(Save, 2 * Length(AFigure.Points) + 4);
   Save[0]:=IntToStr(Length(AFigure.Points));
   Save[1]:=IntToStr((AFigure as TLittleFigure).Width);
-  Save[3] := IntToStr(ord((AFigure as TLittleFigure).PenStyle));
-  Save[4]:= ColorToString((AFigure as TLittleFigure).PenColor);
+  Save[2] := IntToStr(ord((AFigure as TLittleFigure).PenStyle));
+  Save[3]:= ColorToString((AFigure as TLittleFigure).PenColor);
   i := 4;
   for j:=0 to high(AFigure.Points)do begin
     Save[i]:=FloatToStr(AFigure.Points[j].x);
@@ -434,9 +439,9 @@ var
 begin
   Figures[n] := TPolyLine.Create();
   SetLength(Figures[n].Points, StrToInt(a[0]));
-  (Figures[n] as TPolyLine).Width := StrToInt(a[1]);
+  (Figures[n] as TLittleFigure).Width := StrToInt(a[1]);
   (Figures[n] as TLittleFigure).PenStyle := PStyles[StrToInt(a[2])];
-  (Figures[n] as TPolyLine).PenColor := StringToColor(a[3]);
+  (Figures[n] as TLittleFigure).PenColor := StringToColor(a[3]);
   i := 4;
   for j:=0 to (strtoint(a[0])) * 2 - 1 do begin
     Figures[n].Points.[j].x:=StrToFloat(a[i]);

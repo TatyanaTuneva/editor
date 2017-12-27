@@ -1,7 +1,7 @@
 object Editor: TEditor
-  Left = 845
+  Left = 84
   Height = 728
-  Top = 282
+  Top = 157
   Width = 1362
   HorzScrollBar.Page = 287
   HorzScrollBar.Range = 287
@@ -122,6 +122,14 @@ object Editor: TEditor
       object SelectAll: TMenuItem
         Caption = 'Выделить все'
         OnClick = SelectAllClick
+      end
+      object CopySelected: TMenuItem
+        Caption = 'Кoпировать выделенное'
+        OnClick = CopySelectedClick
+      end
+      object PasteSelected: TMenuItem
+        Caption = 'Вставка'
+        OnClick = PasteSelectedClick
       end
       object DeleteSelected: TMenuItem
         Caption = 'Удалить выделенное'
