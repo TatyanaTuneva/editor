@@ -450,13 +450,11 @@ end;
 
 procedure TEditor.RedooClick(Sender: TObject);
 begin
- if UndoFlag then
+ if UndoFlag and not (Now = Length(ArrayOfActions)) then
  begin
-   if Length(ArrayOfActions) <> 0 then begin
      Now := Now + 1;
      Figures := RefreshArrays(ArrayOfActions[Now]);
    end;
- end;
  Invalidate;
 end;
 

@@ -95,6 +95,7 @@ procedure CreateArrayOfActions();
 procedure RefreshFigures(N: integer);
 function RefreshArrays(B: Figures1): Figures1;
 procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width: integer);
+procedure StopUndo();
 
 var
   Figures: array of TFigure;
@@ -116,6 +117,7 @@ begin
   SetLength(ArrayOfActions, Length(ArrayOfActions) + 1);
   SetLength(ArrayOfActions[High(ArrayOfActions)], Length(Figures));
   ArrayOfActions[High(ArrayOfActions)] := RefreshArrays(Figures);
+  Now := Now + 1;
 end;
 
 procedure RefreshFigures(N: integer);
@@ -154,16 +156,20 @@ begin
                            (A[i] as TRoundedRectangle).RoundingRadiusY := (B[i] as TRoundedRectangle).RoundingRadiusY;
                          end;
   end;
-
-  for q := 0 to Length(B[i].Points) do begin
-    SetLength(A[i].Points, Length(A[i].Points) + 1);
-    A[i].Points[q] := B[i].Points[q];
-  end;
+  SetLength(A[i].Points, Length(B[i].Points));
+  for q := 0 to Length(B[i].Points) do A[i].Points[q] := B[i].Points[q];
 
   (A[i] as TLittleFigure).PenColor := (B[i] as TLittleFigure).PenColor;
   (A[i] as TLittleFigure).PenStyle := (B[i] as TLittleFigure).PenStyle;
   (A[i] as TLittleFigure).Width := (B[i] as TLittleFigure).Width;
 end;
+  Result := A;
+end;
+
+procedure StopUndo();
+begin
+  SetLength(ArrayOfActions, Now + 1);
+  UndoFlag := False;
 end;
 
 procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);
@@ -512,4 +518,5 @@ end;
 
 
 begin
+  Now := 0;
 end.

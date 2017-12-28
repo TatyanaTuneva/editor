@@ -483,8 +483,8 @@ end;
 procedure TPolyLineTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TLittleFigure;
-
 begin
+  StopUndo;
   Setlength(Figures, Length(Figures) + 1);
   Figures[high(Figures)] := TPolyLine.Create();
   AFigure := (Figures[high(Figures)] as TLittleFigure);
@@ -501,6 +501,7 @@ procedure TLineTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TLittleFigure;
 begin
+  StopUndo;
   Setlength(Figures, length(Figures) + 1);
   Figures[high(Figures)] := TLine.Create();
   AFigure := (Figures[high(Figures)] as TLittleFigure);
@@ -518,6 +519,7 @@ procedure TRectangleTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TBigFigure;
 begin
+  StopUndo;
   Setlength(Figures, Length(figures) + 1);
   Figures[high(Figures)] := TRectangle.Create();
   AFigure := (Figures[high(Figures)] as TBigFigure);
@@ -537,6 +539,7 @@ procedure TRoundedRectangleTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TBigFigure;
 begin
+  StopUndo;
   Setlength(Figures, Length(figures) + 1);
   Figures[high(Figures)] := TRoundedRectangle.Create();
   AFigure := (Figures[high(Figures)] as TBigFigure);
@@ -558,6 +561,7 @@ procedure TEllipceTool.MouseDown(X: integer;Y: integer);
 var
   AFigure: TBigFigure;
 begin
+  StopUndo;
   SetLength(Figures, Length(figures) + 1);
   Figures[high(Figures)] := TEllipce.Create();
   AFigure := (Figures[high(Figures)] as TBigFigure);
