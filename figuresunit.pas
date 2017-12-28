@@ -79,28 +79,29 @@ TRectangleMagnifier = class(TLittleFigure)
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
-TRoundedRectangle = class (TBigFigure)                                            procedure Draw(ACanvas:TCanvas); override;
+TRoundedRectangle = class (TBigFigure)
+  procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
   class  procedure Download(n: integer; a: StringArray);
 
 end;
 
-                                                                           integer);
-procedure CreateArrayOfActions();
-procedure RefreshFigures(N: integer);
-function RefreshArrays(B: Figures1): Figures1;
   TFigureClass    = class  of TFigure;
   Figures1 =  array of TFigure;
 
-procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width:
-  ArrayOfActions: array of Figures1;
+
+procedure CreateArrayOfActions();
+procedure RefreshFigures(N: integer);
+function RefreshArrays(B: Figures1): Figures1;
+procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width: integer);
 
 var
   Figures: array of TFigure;
   Buffer: array of TFigure;
   Now: Integer;
   UndoFlag: Boolean;
+  ArrayOfActions: array of Figures1;
 
 const PStyles: array[0..5] of TPenStyle = (psSolid, psClear, psDot,
 psDash, psDashDot, psDashDotDot);
