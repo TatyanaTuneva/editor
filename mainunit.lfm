@@ -1,7 +1,7 @@
 object Editor: TEditor
-  Left = 84
+  Left = 826
   Height = 728
-  Top = 157
+  Top = 169
   Width = 1362
   HorzScrollBar.Page = 287
   HorzScrollBar.Range = 287
@@ -111,6 +111,14 @@ object Editor: TEditor
     end
     object Correction: TMenuItem
       Caption = 'Правка'
+      object Undo: TMenuItem
+        Caption = 'Oтменить'
+        OnClick = UndoClick
+      end
+      object Redoo: TMenuItem
+        Caption = 'Вернуть'
+        OnClick = RedooClick
+      end
       object ClearAll: TMenuItem
         Caption = 'Очистить все'
         OnClick = ClearAllClick

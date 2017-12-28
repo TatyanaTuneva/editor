@@ -71,7 +71,6 @@ end;
 
 TBigFigureTool = class(TLittleFigureTool)
   procedure ParamListCreate(); override;
-  procedure Mouseup(X: integer;Y: integer; ACanvas: TCanvas); override;
 end;
 
 TPolyLineTool = class(TLittleFigureTool)
@@ -176,6 +175,7 @@ begin
   for I:=0 to High(Figures) do
     if Figures[i].Selected then (Figures[i] as TLittleFigure).PenColor := APenColor;
     Invalidate_;
+    CreateArrayOfActions();
 end;
 
 procedure TPenStyleParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -212,6 +212,7 @@ begin
   for I:=0 to High(Figures) do
   if Figures[i].Selected then (Figures[i] as TLittleFigure).PenStyle := APenStyle;
    Invalidate_;
+   CreateArrayOfActions();
 end;
 
 procedure TWidthParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -240,6 +241,7 @@ begin
  for I:=0 to High(Figures) do
   if Figures[i].Selected then (Figures[i] as TLittleFigure).Width := AWidth;
   Invalidate_;
+  CreateArrayOfActions();
 end;
 
 procedure TBrushColorParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -268,6 +270,7 @@ begin
     if (Figures[i].Selected) and not (Figures[i].Index = 1)
       then (Figures[i] as TBigFigure).BrushColor := ABrushColor;
    Invalidate_;
+   CreateArrayOfActions();
 end;
 
 procedure TBrushStyleParam.CreateObjects(Panel: TPanel; pos: Integer);
@@ -305,6 +308,7 @@ begin
     if (Figures[i].Selected) and not (Figures[i].Index = 1)
       then (Figures[i] as TBigFigure).BrushStyle := ABrushStyle;
    Invalidate_;
+   CreateArrayOfActions();
 end;
 
 procedure TRoundingRadiusParamX.CreateObjects(Panel: TPanel; pos: Integer);
@@ -334,6 +338,7 @@ begin
     if (Figures[i].Selected) and (Figures[i].Index = 3)
       then (Figures[i] as TRoundedRectangle).RoundingRadiusX := ARadiusX;
    Invalidate_;
+   CreateArrayOfActions();
 end;
 
 procedure TRoundingRadiusParamY.CreateObjects(Panel: TPanel; pos: Integer);
@@ -363,6 +368,7 @@ begin
     if (Figures[i].Selected) and (Figures[i].Index = 3)
       then (Figures[i] as TRoundedRectangle).RoundingRadiusY := ARadiusY;
    Invalidate_;
+   CreateArrayOfActions();
 end;
 
 //*********PARAMLISTCREATE********************************************************************************************************
@@ -430,12 +436,9 @@ end;
 
 //*********TFIGURE MOUSEDOWN MOUSEMOVE MOUSEUP********************************************************************************************************
 
-procedure TBigFigureTool.MouseUp(X: Integer;Y: Integer; ACanvas: TCanvas);
-begin
-end;
-
 procedure TLittleFigureTool.MouseUp(X: Integer;Y: Integer; ACanvas: TCanvas);
 begin
+   CreateArrayOfActions();
 end;
 
 procedure TMagnifier.MouseUp(X: integer;Y: integer; ACanvas: TCanvas);

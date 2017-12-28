@@ -15,6 +15,8 @@ type
   TEditor = class(TForm)
     Correction: TMenuItem;
     CopySelected: TMenuItem;
+    Undo: TMenuItem;
+    Redoo: TMenuItem;
     PasteSelected: TMenuItem;
     OpenImage: TMenuItem;
     SaveImage: TMenuItem;
@@ -41,7 +43,6 @@ type
     procedure BackClick(Sender: TObject);
     procedure ButtonsDown(Sender: TObject);
     procedure ClearAllClick(Sender: TObject);
-    procedure ClearClick(Sender: TObject);
     procedure CopySelectedClick(Sender: TObject);
     procedure DeleteSelectedClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -55,6 +56,7 @@ type
     procedure MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure OpenImageClick(Sender: TObject);
     procedure PasteSelectedClick(Sender: TObject);
+    procedure RedooClick(Sender: TObject);
     procedure SaveImageClick(Sender: TObject);
     procedure ScrollBarScroll(Sender: TObject;
       ScrollCode: TScrollCode; var ScrollPos: Integer);
@@ -62,6 +64,7 @@ type
     procedure SelectedDownClick(Sender: TObject);
     procedure SelectedUpClick(Sender: TObject);
     procedure ShowAllClick(Sender: TObject);
+    procedure UndoClick(Sender: TObject);
     procedure ZoomChange(Sender: TObject);
 
 
@@ -123,7 +126,6 @@ var
   ToolButton: TSpeedButton;
   ToolIcon: TBitMap;
 begin
-  Now := 0;
   SetLength(ArrayOfActions, Length(ArrayOfActions) + 1);
   CurrentTool := TPolyLineTool.Create();
   Zoom := 100;
@@ -173,11 +175,6 @@ procedure TEditor.ClearAllClick(Sender: TObject);
 begin
   SetLength(Figures,0);
   Invalidate;
-end;
-
-procedure TEditor.ClearClick(Sender: TObject);
-begin
-
 end;
 
 procedure TEditor.CopySelectedClick(Sender: TObject);
@@ -230,6 +227,7 @@ procedure TEditor.BackClick(Sender: TObject);
 begin
   if Length(Figures)<>0 then SetLength(Figures, Length(figures) - 1);
   Invalidate;
+  CreateArrayOfActions();
 end;
 
 procedure TEditor.DeleteSelectedClick(Sender: TObject);
@@ -450,6 +448,28 @@ if (Length(Buffer) <> 0) and BufferFlag then begin
   Invalidate;
 end;
 
+procedure TEditor.RedooClick(Sender: TObject);
+begin
+ if UndoFlag then
+ begin
+   if Length(ArrayOfActions) <> 0 then begin
+     Now := Now + 1;
+     Figures := RefreshArrays(ArrayOfActions[Now]);
+   end;
+ end;
+ Invalidate;
+end;
+
+procedure TEditor.UndoClick(Sender: TObject);
+begin
+  if Length(ArrayOfActions) <> 0 then begin
+  Now := Now - 1;
+  RefreshFigures(Now);
+  UndoFlag := True;
+end;
+  Invalidate;
+end;
+
 procedure DownloadImage(Path: string);
 var
   image: text;
@@ -510,5 +530,4 @@ begin
 end;
 
 begin
-  Now := 0;
 end.

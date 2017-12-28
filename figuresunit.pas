@@ -79,24 +79,28 @@ TRectangleMagnifier = class(TLittleFigure)
   procedure Draw(ACanvas:TCanvas); override;
 end;
 
-TRoundedRectangle = class (TBigFigure)
-  procedure Draw(ACanvas:TCanvas); override;
+TRoundedRectangle = class (TBigFigure)                                            procedure Draw(ACanvas:TCanvas); override;
   procedure SetRegion; override;
   function Save(AFigure: TFigure): StringArray; override;
   class  procedure Download(n: integer; a: StringArray);
+
 end;
 
-
+                                                                           integer);
+procedure CreateArrayOfActions();
+procedure RefreshFigures(N: integer);
+function RefreshArrays(B: Figures1): Figures1;
   TFigureClass    = class  of TFigure;
   Figures1 =  array of TFigure;
 
-procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width:integer);
+procedure LineRegion(p1,p2:TPoint;var tempPoints: array of TPoint;Width:
+  ArrayOfActions: array of Figures1;
 
 var
-  Figures: Figures1;
+  Figures: array of TFigure;
   Buffer: array of TFigure;
-  ArrayOfActions: array of Figures1;
-  Now: integer;
+  Now: Integer;
+  UndoFlag: Boolean;
 
 const PStyles: array[0..5] of TPenStyle = (psSolid, psClear, psDot,
 psDash, psDashDot, psDashDotDot);
@@ -105,6 +109,61 @@ const BStyles: array [0..7] of TBrushStyle = (bsSolid, bsClear,
 bsHorizontal, bsVertical, bsFDiagonal, bsBDiagonal, bsCross, bsDiagCross);
 
 Implementation
+
+procedure CreateArrayOfActions();
+begin
+  SetLength(ArrayOfActions, Length(ArrayOfActions) + 1);
+  SetLength(ArrayOfActions[High(ArrayOfActions)], Length(Figures));
+  ArrayOfActions[High(ArrayOfActions)] := RefreshArrays(Figures);
+end;
+
+procedure RefreshFigures(N: integer);
+begin
+  SetLength(Figures, 0);
+  SetLength(Figures, Length(ArrayOfActions[N]));
+  Figures := RefreshArrays(ArrayOfActions[N]);
+end;
+
+function RefreshArrays(B: Figures1): Figures1;        // из B перенoсим в А
+var
+  a: Figures1;
+  i, q: integer;
+begin
+  SetLength(A, Length(B));
+  for i := 0 to high(B) do begin
+  case B[i].ClassName of
+
+    'TPolyLine':         A[i] := TPolyLine.Create;
+    'TLine'    :         A[i] := TLine.Create;
+    'TEllipce' :         begin
+                           A[i] := TEllipce.Create;
+                           (A[i]as TBigFigure).BrushColor := (B[i] as TBigFigure).BrushColor;
+                           (A[i] as TBigFigure).BrushStyle := (B[i] as TBigFigure).BrushStyle;
+                         end;
+    'TRectangle':        begin
+                           A[i] := TRectangle.Create;
+                           (A[i] as TBigFigure).BrushColor := (B[i] as TBigFigure).BrushColor;
+                           (A[i] as TBigFigure).BrushStyle := (B[i] as TBigFigure).BrushStyle;
+                         end;
+    'TRoundedRectangle': begin
+                           A[i] := TRoundedRectangle.Create;
+                           (A[i]as TBigFigure).BrushColor := (B[i] as TBigFigure).BrushColor;
+                           (A[i] as TBigFigure).BrushStyle := (B[i] as TBigFigure).BrushStyle;
+                           (A[i] as TRoundedRectangle).RoundingRadiusX := (B[i] as TRoundedRectangle).RoundingRadiusX;
+                           (A[i] as TRoundedRectangle).RoundingRadiusY := (B[i] as TRoundedRectangle).RoundingRadiusY;
+                         end;
+  end;
+
+  for q := 0 to Length(B[i].Points) do begin
+    SetLength(A[i].Points, Length(A[i].Points) + 1);
+    A[i].Points[q] := B[i].Points[q];
+  end;
+
+  (A[i] as TLittleFigure).PenColor := (B[i] as TLittleFigure).PenColor;
+  (A[i] as TLittleFigure).PenStyle := (B[i] as TLittleFigure).PenStyle;
+  (A[i] as TLittleFigure).Width := (B[i] as TLittleFigure).Width;
+end;
+end;
 
 procedure TFigure.DrawSelection(AFigure: TFigure; Canvas: TCanvas; Width: integer);
 var
